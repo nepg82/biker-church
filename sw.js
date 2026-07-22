@@ -1,4 +1,4 @@
-const CACHE_NAME = 'club-hub-v1';
+const CACHE_NAME = 'biker-church-v2';
 
 const SHELL_FILES = [
   './index.html',
@@ -9,8 +9,8 @@ const SHELL_FILES = [
   './js/github-api.js',
   './manifest.json',
   './manifest-admin.json',
-  './app-icons/app-icon-192.png',
-  './app-icons/app-icon-512.png'
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {

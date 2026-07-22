@@ -1,4 +1,4 @@
-# Club Hub
+# Biker Church
 
 A two-app PWA for club events and announcements:
 

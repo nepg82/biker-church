@@ -6,9 +6,9 @@
   "display": "standalone",
   "background_color": "#EFE8D8",
   "theme_color": "#7C5A3F",
-  "description": "Events and announcements.",
+  "description": "Club events and announcements.",
   "icons": [
-    { "src": "app-icons/app-icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "app-icons/app-icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
