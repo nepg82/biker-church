@@ -1,0 +1,14 @@
+{
+  "clubName": "Your Club Name",
+  "tagline": "Stay in the loop.",
+  "bannerFile": "",
+  "bannerVersion": 0,
+  "colors": {
+    "bg": "#EFE8D8",
+    "cork": "#7C5A3F",
+    "ink": "#2B2A28",
+    "accent": "#3D5A80",
+    "pin": "#B23A2E",
+    "line": "#D8CBB0"
+  }
+}

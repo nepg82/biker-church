@@ -1,0 +1,9 @@
+[
+  {
+    "id": "post-sample-1",
+    "title": "Welcome to the Club Hub",
+    "body": "This is your wall. Announcements from the club will show up here.",
+    "date": "2026-07-21",
+    "pinned": true
+  }
+]
