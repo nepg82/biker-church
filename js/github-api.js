@@ -106,5 +106,46 @@ const GitHubAPI = (() => {
     return request(`/repos/${owner}/${repo}`, { token });
   }
 
-  return { getJsonFile, putJsonFile, putBinaryFile, verifyAccess };
+  // ---- Queuing + auto-retry for rapid-fire saves ----
+  // GitHub's contents API can briefly return a slightly stale sha right after
+  // a commit (propagation lag). Saving again quickly then gets rejected with
+  // a 409 "does not match" error even though nothing is really wrong. To fix
+  // this invisibly: (1) queue writes to the same file so they never race each
+  // other, and (2) on a 409, re-fetch the latest version and retry a few times
+  // with a short backoff before giving up.
+
+  const fileQueues = {};
+
+  function enqueue(key, fn) {
+    const prev = fileQueues[key] || Promise.resolve();
+    const result = prev.then(fn, fn);
+    fileQueues[key] = result.catch(() => {});
+    return result;
+  }
+
+  // mutate(currentJsonOrNull) => newJson. Runs against the freshest fetched
+  // copy every attempt, so it's safe even if several updates are queued up.
+  async function updateJsonFile({ owner, repo, branch, token, path, mutate, message, maxRetries = 6 }) {
+    return enqueue(`${owner}/${repo}/${path}`, async () => {
+      let lastErr;
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        const latest = await getJsonFile({ owner, repo, branch, token, path });
+        const newJson = mutate(latest ? latest.json : null);
+        try {
+          const result = await putJsonFile({
+            owner, repo, branch, token, path, json: newJson,
+            sha: latest ? latest.sha : undefined, message
+          });
+          return { result, json: newJson };
+        } catch (e) {
+          lastErr = e;
+          if (!String(e.message).includes('409') || attempt === maxRetries) throw e;
+          await new Promise(r => setTimeout(r, 600 * (attempt + 1)));
+        }
+      }
+      throw lastErr;
+    });
+  }
+
+  return { getJsonFile, putJsonFile, putBinaryFile, verifyAccess, updateJsonFile };
 })();

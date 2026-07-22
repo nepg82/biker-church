@@ -130,39 +130,43 @@ async function handleSaveAppearance() {
   setStatus(status, 'Saving…', 'busy');
   $('save-appearance-btn').disabled = true;
   try {
-    const latest = await GitHubAPI.getJsonFile({ owner: state.owner, repo: state.repo, branch: state.branch, token: state.token, path: 'data/config.json' });
-    const updated = {
-      ...(latest ? latest.json : {}),
-      clubName: $('a-club-name').value.trim(),
-      tagline: $('a-tagline').value.trim(),
-      colors: {
-        bg: $('a-color-bg').value,
-        cork: $('a-color-cork').value,
-        ink: $('a-color-ink').value,
-        accent: $('a-color-accent').value,
-        pin: $('a-color-pin').value,
-        line: $('a-color-line').value
-      }
+    const clubName = $('a-club-name').value.trim();
+    const tagline = $('a-tagline').value.trim();
+    const colors = {
+      bg: $('a-color-bg').value,
+      cork: $('a-color-cork').value,
+      ink: $('a-color-ink').value,
+      accent: $('a-color-accent').value,
+      pin: $('a-color-pin').value,
+      line: $('a-color-line').value
     };
 
-    const bannerFile = $('a-banner-file').files[0];
-    if (bannerFile) {
-      const ext = bannerFile.name.split('.').pop().toLowerCase();
-      const path = `assets/banner.${ext}`;
+    let bannerFile = null, bannerPath = null;
+    const fileInput = $('a-banner-file').files[0];
+    if (fileInput) {
+      const ext = fileInput.name.split('.').pop().toLowerCase();
+      bannerPath = `assets/banner.${ext}`;
       await GitHubAPI.putBinaryFile({
         owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
-        path, file: bannerFile, message: 'Update club banner'
+        path: bannerPath, file: fileInput, message: 'Update club banner'
       });
-      updated.bannerFile = path;
-      updated.bannerVersion = Date.now();
     }
 
-    const result = await GitHubAPI.putJsonFile({
+    const { result, json } = await GitHubAPI.updateJsonFile({
       owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
-      path: 'data/config.json', json: updated, sha: latest ? latest.sha : undefined,
+      path: 'data/config.json',
+      mutate: (current) => {
+        const merged = { ...(current || {}), clubName, tagline, colors };
+        if (bannerPath) {
+          merged.bannerFile = bannerPath;
+          merged.bannerVersion = Date.now();
+        }
+        return merged;
+      },
       message: 'Update club appearance'
     });
-    state.config = updated;
+
+    state.config = json;
     state.configSha = result.content.sha;
     fillAppearanceForm();
     setStatus(status, 'Saved. Changes go live in about a minute.', 'ok');
@@ -219,7 +223,7 @@ async function handleDeletePastEvents() {
   const status = $('event-status');
   setStatus(status, 'Deleting…', 'busy');
   try {
-    await writeEvents(state.events.filter(ev => !isPastEvent(ev)), `Delete ${past.length} past event(s)`);
+    await writeEvents((current) => current.filter(ev => !isPastEvent(ev)), `Delete ${past.length} past event(s)`);
     setStatus(status, 'Deleted.', 'ok');
   } catch (e) {
     setStatus(status, `Couldn't delete: ${e.message}`, 'err');
@@ -251,13 +255,12 @@ function resetEventForm() {
   $('cancel-event-edit').style.display = 'none';
 }
 
-async function writeEvents(updatedEvents, message) {
-  const latest = await GitHubAPI.getJsonFile({ owner: state.owner, repo: state.repo, branch: state.branch, token: state.token, path: 'data/events.json' });
-  const result = await GitHubAPI.putJsonFile({
+async function writeEvents(mutate, message) {
+  const { result, json } = await GitHubAPI.updateJsonFile({
     owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
-    path: 'data/events.json', json: updatedEvents, sha: latest ? latest.sha : undefined, message
+    path: 'data/events.json', mutate: (current) => mutate(current || []), message
   });
-  state.events = updatedEvents;
+  state.events = json;
   state.eventsSha = result.content.sha;
   renderEventList();
 }
@@ -280,13 +283,13 @@ async function handleSaveEvent() {
       location: $('e-location').value.trim(),
       description: $('e-description').value.trim()
     };
-    let updated;
-    if (state.editingEventId) {
-      updated = state.events.map(ev => ev.id === state.editingEventId ? payload : ev);
-    } else {
-      updated = [...state.events, payload];
-    }
-    await writeEvents(updated, state.editingEventId ? `Update event: ${title}` : `Add event: ${title}`);
+    const editingId = state.editingEventId;
+    await writeEvents(
+      (current) => editingId
+        ? current.map(ev => ev.id === editingId ? payload : ev)
+        : [...current, payload],
+      editingId ? `Update event: ${title}` : `Add event: ${title}`
+    );
     resetEventForm();
     setStatus(status, 'Saved.', 'ok');
   } catch (e) {
@@ -302,7 +305,7 @@ async function handleDeleteEvent(id) {
   const status = $('event-status');
   setStatus(status, 'Deleting…', 'busy');
   try {
-    await writeEvents(state.events.filter(e => e.id !== id), `Delete event: ${ev.title}`);
+    await writeEvents((current) => current.filter(e => e.id !== id), `Delete event: ${ev.title}`);
     setStatus(status, 'Deleted.', 'ok');
     if (state.editingEventId === id) resetEventForm();
   } catch (e) {
@@ -359,13 +362,12 @@ function resetPostForm() {
   $('cancel-post-edit').style.display = 'none';
 }
 
-async function writePosts(updatedPosts, message) {
-  const latest = await GitHubAPI.getJsonFile({ owner: state.owner, repo: state.repo, branch: state.branch, token: state.token, path: 'data/posts.json' });
-  const result = await GitHubAPI.putJsonFile({
+async function writePosts(mutate, message) {
+  const { result, json } = await GitHubAPI.updateJsonFile({
     owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
-    path: 'data/posts.json', json: updatedPosts, sha: latest ? latest.sha : undefined, message
+    path: 'data/posts.json', mutate: (current) => mutate(current || []), message
   });
-  state.posts = updatedPosts;
+  state.posts = json;
   state.postsSha = result.content.sha;
   renderPostList();
 }
@@ -387,13 +389,13 @@ async function handleSavePost() {
       body: $('p-body').value.trim(),
       pinned: $('p-pinned').checked
     };
-    let updated;
-    if (state.editingPostId) {
-      updated = state.posts.map(p => p.id === state.editingPostId ? payload : p);
-    } else {
-      updated = [...state.posts, payload];
-    }
-    await writePosts(updated, state.editingPostId ? `Update post: ${title}` : `Add post: ${title}`);
+    const editingId = state.editingPostId;
+    await writePosts(
+      (current) => editingId
+        ? current.map(p => p.id === editingId ? payload : p)
+        : [...current, payload],
+      editingId ? `Update post: ${title}` : `Add post: ${title}`
+    );
     resetPostForm();
     setStatus(status, 'Saved.', 'ok');
   } catch (e) {
@@ -409,7 +411,7 @@ async function handleDeletePost(id) {
   const status = $('post-status');
   setStatus(status, 'Deleting…', 'busy');
   try {
-    await writePosts(state.posts.filter(x => x.id !== id), `Delete post: ${p.title}`);
+    await writePosts((current) => current.filter(x => x.id !== id), `Delete post: ${p.title}`);
     setStatus(status, 'Deleted.', 'ok');
     if (state.editingPostId === id) resetPostForm();
   } catch (e) {
