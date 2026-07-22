@@ -6,5 +6,13 @@
     "time": "18:00",
     "location": "Community Room",
     "description": "First meeting of the season. Come say hello and find out what's planned."
+  },
+  {
+    "id": "evt-mrw6uggi-c1q5g",
+    "title": "Biker Breakfast",
+    "date": "2026-07-25",
+    "time": "08:30",
+    "location": "Pastor Don's House",
+    "description": "Pastries, Donuts, coffee."
   }
 ]
