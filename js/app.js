@@ -17,9 +17,9 @@ function applyTheme(config) {
   if (c.pin) root.setProperty('--color-pin', c.pin);
   if (c.line) root.setProperty('--color-line', c.line);
 
-  document.getElementById('club-name').textContent = config.clubName || 'Club Hub';
+  document.getElementById('club-name').textContent = config.clubName || 'Biker Church';
   document.getElementById('club-tagline').textContent = config.tagline || '';
-  document.title = config.clubName ? `${config.clubName} — Club Hub` : 'Club Hub';
+  document.title = config.clubName || 'Biker Church';
 
   const bannerImg = document.getElementById('banner-img');
   const bannerFallback = document.getElementById('banner-fallback');
