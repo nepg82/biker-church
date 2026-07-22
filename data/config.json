@@ -1,14 +1,14 @@
 {
-  "clubName": "Your Club Name",
-  "tagline": "Stay in the loop.",
+  "clubName": "Biker Church",
+  "tagline": "There's nothing Jesus can't fix in 2026... and forever!",
   "bannerFile": "",
   "bannerVersion": 0,
   "colors": {
-    "bg": "#EFE8D8",
-    "cork": "#7C5A3F",
-    "ink": "#2B2A28",
-    "accent": "#3D5A80",
-    "pin": "#B23A2E",
-    "line": "#D8CBB0"
+    "bg": "#efe8d8",
+    "cork": "#7c5a3f",
+    "ink": "#2b2a28",
+    "accent": "#3d5a80",
+    "pin": "#b23a2e",
+    "line": "#d8cbb0"
   }
 }
