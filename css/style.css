@@ -358,6 +358,20 @@ textarea { resize: vertical; min-height: 70px; }
   padding: 8px 10px;
 }
 
+.item-row.past { opacity: 0.55; }
+
+.past-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--color-pin);
+  border: 1px solid var(--color-pin);
+  border-radius: 4px;
+  padding: 1px 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
 .item-row .item-main { flex: 1; min-width: 0; }
 .item-row .item-main strong { display: block; font-size: 0.9rem; }
 .item-row .item-main span { display: block; font-size: 0.75rem; opacity: 0.6; font-family: var(--font-mono); }
