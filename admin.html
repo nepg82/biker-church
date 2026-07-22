@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Club Hub Admin</title>
+<meta name="theme-color" content="#3D5A80">
+<link rel="manifest" href="manifest-admin.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+  <h1 class="admin-title">Club Hub Admin <span id="connected-badge" class="connected-badge" style="display:none;">Connected</span></h1>
+  <p class="admin-sub">Manage events, announcements, and how the member app looks.</p>
+
+  <section class="panel">
+    <h2>Connect to your repo</h2>
+    <p class="hint">
+      Paste a fine-grained GitHub token scoped to <strong>this repository only</strong>, with
+      <strong>Contents: Read and write</strong> permission. This stays in your browser and is
+      sent straight to GitHub over HTTPS — nowhere else. See the README for how to create one.
+    </p>
+
+    <label for="f-owner">GitHub owner (username or org)</label>
+    <input type="text" id="f-owner" placeholder="e.g. jsmith">
+
+    <label for="f-repo">Repository name</label>
+    <input type="text" id="f-repo" placeholder="e.g. club-hub">
+
+    <label for="f-branch">Branch (optional, defaults to repo's default)</label>
+    <input type="text" id="f-branch" placeholder="main">
+
+    <label for="f-token">Personal access token</label>
+    <input type="password" id="f-token" placeholder="github_pat_...">
+
+    <div class="toggle-row">
+      <input type="checkbox" id="f-remember">
+      <label for="f-remember">Remember this token on this device</label>
+    </div>
+
+    <button type="button" id="connect-btn" class="btn">Connect</button>
+    <p id="connect-status" class="status-line"></p>
+  </section>
+
+  <section class="panel data-panel" style="display:none;">
+    <h2>Appearance</h2>
+    <p class="hint">Colors and banner apply to the member app for everyone.</p>
+
+    <label for="a-club-name">Club name</label>
+    <input type="text" id="a-club-name">
+
+    <label for="a-tagline">Tagline</label>
+    <input type="text" id="a-tagline">
+
+    <label for="a-banner-file">Banner image (upload to replace)</label>
+    <input type="file" id="a-banner-file" accept="image/*">
+    <img id="current-banner" alt="Current banner" style="display:none;max-width:100%;border-radius:6px;margin-top:8px;">
+
+    <label style="margin-top:18px;">Colors</label>
+    <div class="color-grid">
+      <div class="color-field"><label for="a-color-bg">Background</label><input type="color" id="a-color-bg"></div>
+      <div class="color-field"><label for="a-color-cork">Board</label><input type="color" id="a-color-cork"></div>
+      <div class="color-field"><label for="a-color-ink">Text</label><input type="color" id="a-color-ink"></div>
+      <div class="color-field"><label for="a-color-accent">Accent</label><input type="color" id="a-color-accent"></div>
+      <div class="color-field"><label for="a-color-pin">Pin</label><input type="color" id="a-color-pin"></div>
+      <div class="color-field"><label for="a-color-line">Divider</label><input type="color" id="a-color-line"></div>
+    </div>
+
+    <button type="button" id="save-appearance-btn" class="btn">Save appearance</button>
+    <p id="appearance-status" class="status-line"></p>
+  </section>
+
+  <section class="panel data-panel" style="display:none;">
+    <h2>Events</h2>
+    <p class="hint">Shown on the member app's calendar.</p>
+
+    <div id="event-list" class="item-list"></div>
+
+    <h3 id="event-form-title" style="font-family:var(--font-display);font-size:1.1rem;margin-top:18px;">Add event</h3>
+    <label for="e-title">Title</label>
+    <input type="text" id="e-title">
+    <label for="e-date">Date</label>
+    <input type="date" id="e-date">
+    <label for="e-time">Time (optional)</label>
+    <input type="time" id="e-time">
+    <label for="e-location">Location (optional)</label>
+    <input type="text" id="e-location">
+    <label for="e-description">Description (optional)</label>
+    <textarea id="e-description"></textarea>
+
+    <button type="button" id="save-event-btn" class="btn">Save event</button>
+    <button type="button" id="cancel-event-edit" class="btn secondary" style="display:none;">Cancel edit</button>
+    <p id="event-status" class="status-line"></p>
+  </section>
+
+  <section class="panel data-panel" style="display:none;">
+    <h2>Announcements</h2>
+    <p class="hint">Shown on the member app's wall.</p>
+
+    <div id="post-list" class="item-list"></div>
+
+    <h3 id="post-form-title" style="font-family:var(--font-display);font-size:1.1rem;margin-top:18px;">Add announcement</h3>
+    <label for="p-title">Title</label>
+    <input type="text" id="p-title">
+    <label for="p-date">Date</label>
+    <input type="date" id="p-date">
+    <label for="p-body">Message</label>
+    <textarea id="p-body"></textarea>
+    <div class="toggle-row">
+      <input type="checkbox" id="p-pinned">
+      <label for="p-pinned">Pin to top of the wall</label>
+    </div>
+
+    <button type="button" id="save-post-btn" class="btn">Save announcement</button>
+    <button type="button" id="cancel-post-edit" class="btn secondary" style="display:none;">Cancel edit</button>
+    <p id="post-status" class="status-line"></p>
+  </section>
+</div>
+
+<script src="js/github-api.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

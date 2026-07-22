@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Club Hub</title>
+<meta name="theme-color" content="#7C5A3F">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <img id="banner-img" class="banner-img" alt="Club banner" style="display:none;">
+  <div id="banner-fallback" class="banner-fallback"></div>
+  <div class="header-titles">
+    <h1 id="club-name" class="club-name">Club Hub</h1>
+    <p id="club-tagline" class="club-tagline"></p>
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="tab-wall">Wall</button>
+  <button class="tab-btn" data-tab="tab-calendar">Calendar</button>
+</nav>
+
+<main>
+  <section id="tab-wall" class="tab-panel active">
+    <div id="wall-board" class="wall-board">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </section>
+
+  <section id="tab-calendar" class="tab-panel">
+    <div id="calendar-list"></div>
+  </section>
+</main>
+
+<footer class="site-footer">Club Hub</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
