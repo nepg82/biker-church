@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Biker Church Admin</title>
+<title>Club Hub Admin</title>
 <meta name="theme-color" content="#3D5A80">
 <link rel="manifest" href="manifest-admin.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -13,11 +13,11 @@
 <body class="admin-body">
 
 <div class="admin-shell">
-  <h1 class="admin-title">Biker Church Admin <span id="connected-badge" class="connected-badge" style="display:none;">Connected</span></h1>
+  <h1 class="admin-title">Club Hub Admin</h1>
   <p class="admin-sub">Manage events, announcements, and how the member app looks.</p>
 
-  <section class="panel">
-    <h2>Connect to your repo</h2>
+  <details class="panel" id="connect-details" open>
+    <summary>Connect to your repo <span id="connected-badge" class="connected-badge" style="display:none;">Connected</span></summary>
     <p class="hint">
       Paste a fine-grained GitHub token scoped to <strong>this repository only</strong>, with
       <strong>Contents: Read and write</strong> permission. This stays in your browser and is
@@ -43,10 +43,10 @@
 
     <button type="button" id="connect-btn" class="btn">Connect</button>
     <p id="connect-status" class="status-line"></p>
-  </section>
+  </details>
 
-  <section class="panel data-panel" style="display:none;">
-    <h2>Appearance</h2>
+  <details class="panel data-panel" id="appearance-details" style="display:none;">
+    <summary>Appearance</summary>
     <p class="hint">Colors and banner apply to the member app for everyone.</p>
 
     <label for="a-club-name">Club name</label>
@@ -71,14 +71,14 @@
 
     <button type="button" id="save-appearance-btn" class="btn">Save appearance</button>
     <p id="appearance-status" class="status-line"></p>
-  </section>
+  </details>
 
   <section class="panel data-panel" style="display:none;">
     <h2>Events</h2>
     <p class="hint">Shown on the member app's calendar.</p>
 
     <button type="button" id="bulk-delete-past-btn" class="btn danger" style="display:none;margin-top:0;margin-bottom:10px;">Delete past events</button>
-    
+
     <div id="event-list" class="item-list"></div>
 
     <h3 id="event-form-title" style="font-family:var(--font-display);font-size:1.1rem;margin-top:18px;">Add event</h3>
