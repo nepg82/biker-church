@@ -1,0 +1,413 @@
+const LS_OWNER = 'clubhub_owner';
+const LS_REPO = 'clubhub_repo';
+const LS_BRANCH = 'clubhub_branch';
+const LS_REMEMBER = 'clubhub_remember_token';
+
+let state = {
+  owner: '', repo: '', branch: '', token: '',
+  config: null, configSha: null,
+  events: [], eventsSha: null,
+  posts: [], postsSha: null,
+  editingEventId: null,
+  editingPostId: null
+};
+
+const $ = (id) => document.getElementById(id);
+
+function setStatus(el, msg, type) {
+  el.textContent = msg;
+  el.className = 'status-line' + (type ? ' ' + type : '');
+}
+
+function newId(prefix) {
+  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+// ---------- Setup / connection ----------
+
+function loadSavedConnection() {
+  $('f-owner').value = localStorage.getItem(LS_OWNER) || '';
+  $('f-repo').value = localStorage.getItem(LS_REPO) || '';
+  $('f-branch').value = localStorage.getItem(LS_BRANCH) || '';
+  if (localStorage.getItem(LS_REMEMBER) === '1') {
+    $('f-remember').checked = true;
+  }
+}
+
+async function handleConnect() {
+  const owner = $('f-owner').value.trim();
+  const repo = $('f-repo').value.trim();
+  const branch = $('f-branch').value.trim();
+  const token = $('f-token').value.trim();
+  const remember = $('f-remember').checked;
+  const status = $('connect-status');
+
+  if (!owner || !repo || !token) {
+    setStatus(status, 'Fill in owner, repo, and a token.', 'err');
+    return;
+  }
+
+  setStatus(status, 'Connecting…', 'busy');
+  $('connect-btn').disabled = true;
+
+  try {
+    await GitHubAPI.verifyAccess({ owner, repo, token });
+
+    state.owner = owner;
+    state.repo = repo;
+    state.branch = branch;
+    state.token = token;
+
+    localStorage.setItem(LS_OWNER, owner);
+    localStorage.setItem(LS_REPO, repo);
+    localStorage.setItem(LS_BRANCH, branch);
+    localStorage.setItem(LS_REMEMBER, remember ? '1' : '0');
+    if (remember) sessionStorage.removeItem('clubhub_token');
+    else sessionStorage.setItem('clubhub_token', token);
+
+    await loadAllData();
+
+    setStatus(status, 'Connected.', 'ok');
+    $('connected-badge').style.display = 'inline-block';
+    document.querySelectorAll('.panel.data-panel').forEach(p => p.style.display = 'block');
+  } catch (e) {
+    setStatus(status, `Couldn't connect: ${e.message}`, 'err');
+  } finally {
+    $('connect-btn').disabled = false;
+  }
+}
+
+async function loadAllData() {
+  const { owner, repo, branch, token } = state;
+
+  const configRes = await GitHubAPI.getJsonFile({ owner, repo, branch, token, path: 'data/config.json' });
+  state.config = configRes ? configRes.json : { clubName: '', tagline: '', colors: {} };
+  state.configSha = configRes ? configRes.sha : null;
+  fillAppearanceForm();
+
+  const eventsRes = await GitHubAPI.getJsonFile({ owner, repo, branch, token, path: 'data/events.json' });
+  state.events = eventsRes ? eventsRes.json : [];
+  state.eventsSha = eventsRes ? eventsRes.sha : null;
+  renderEventList();
+
+  const postsRes = await GitHubAPI.getJsonFile({ owner, repo, branch, token, path: 'data/posts.json' });
+  state.posts = postsRes ? postsRes.json : [];
+  state.postsSha = postsRes ? postsRes.sha : null;
+  renderPostList();
+}
+
+// ---------- Appearance ----------
+
+function fillAppearanceForm() {
+  const c = state.config || {};
+  $('a-club-name').value = c.clubName || '';
+  $('a-tagline').value = c.tagline || '';
+  const colors = c.colors || {};
+  $('a-color-bg').value = colors.bg || '#EFE8D8';
+  $('a-color-cork').value = colors.cork || '#7C5A3F';
+  $('a-color-ink').value = colors.ink || '#2B2A28';
+  $('a-color-accent').value = colors.accent || '#3D5A80';
+  $('a-color-pin').value = colors.pin || '#B23A2E';
+  $('a-color-line').value = colors.line || '#D8CBB0';
+
+  if (c.bannerFile) {
+    $('current-banner').src = `${c.bannerFile}?v=${c.bannerVersion || 0}`;
+    $('current-banner').style.display = 'block';
+  } else {
+    $('current-banner').style.display = 'none';
+  }
+}
+
+async function handleSaveAppearance() {
+  const status = $('appearance-status');
+  setStatus(status, 'Saving…', 'busy');
+  $('save-appearance-btn').disabled = true;
+  try {
+    const latest = await GitHubAPI.getJsonFile({ owner: state.owner, repo: state.repo, branch: state.branch, token: state.token, path: 'data/config.json' });
+    const updated = {
+      ...(latest ? latest.json : {}),
+      clubName: $('a-club-name').value.trim(),
+      tagline: $('a-tagline').value.trim(),
+      colors: {
+        bg: $('a-color-bg').value,
+        cork: $('a-color-cork').value,
+        ink: $('a-color-ink').value,
+        accent: $('a-color-accent').value,
+        pin: $('a-color-pin').value,
+        line: $('a-color-line').value
+      }
+    };
+
+    const bannerFile = $('a-banner-file').files[0];
+    if (bannerFile) {
+      const ext = bannerFile.name.split('.').pop().toLowerCase();
+      const path = `assets/banner.${ext}`;
+      await GitHubAPI.putBinaryFile({
+        owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
+        path, file: bannerFile, message: 'Update club banner'
+      });
+      updated.bannerFile = path;
+      updated.bannerVersion = Date.now();
+    }
+
+    const result = await GitHubAPI.putJsonFile({
+      owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
+      path: 'data/config.json', json: updated, sha: latest ? latest.sha : undefined,
+      message: 'Update club appearance'
+    });
+    state.config = updated;
+    state.configSha = result.content.sha;
+    fillAppearanceForm();
+    setStatus(status, 'Saved. Changes go live in about a minute.', 'ok');
+  } catch (e) {
+    setStatus(status, `Couldn't save: ${e.message}`, 'err');
+  } finally {
+    $('save-appearance-btn').disabled = false;
+  }
+}
+
+// ---------- Events ----------
+
+function renderEventList() {
+  const list = $('event-list');
+  const sorted = [...state.events].sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
+  if (sorted.length === 0) {
+    list.innerHTML = '<p class="hint">No events yet.</p>';
+    return;
+  }
+  list.innerHTML = sorted.map(ev => `
+    <div class="item-row">
+      <div class="item-main">
+        <strong>${escapeHtml(ev.title)}</strong>
+        <span>${ev.date}${ev.time ? ' · ' + ev.time : ''}${ev.location ? ' · ' + escapeHtml(ev.location) : ''}</span>
+      </div>
+      <button type="button" title="Edit" data-edit-event="${ev.id}">✏️</button>
+      <button type="button" title="Delete" data-del-event="${ev.id}">🗑️</button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('[data-edit-event]').forEach(btn =>
+    btn.addEventListener('click', () => startEditEvent(btn.dataset.editEvent)));
+  list.querySelectorAll('[data-del-event]').forEach(btn =>
+    btn.addEventListener('click', () => handleDeleteEvent(btn.dataset.delEvent)));
+}
+
+function startEditEvent(id) {
+  const ev = state.events.find(e => e.id === id);
+  if (!ev) return;
+  state.editingEventId = id;
+  $('e-title').value = ev.title || '';
+  $('e-date').value = ev.date || '';
+  $('e-time').value = ev.time || '';
+  $('e-location').value = ev.location || '';
+  $('e-description').value = ev.description || '';
+  $('event-form-title').textContent = 'Edit event';
+  $('cancel-event-edit').style.display = 'inline-block';
+  $('e-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetEventForm() {
+  state.editingEventId = null;
+  $('e-title').value = '';
+  $('e-date').value = '';
+  $('e-time').value = '';
+  $('e-location').value = '';
+  $('e-description').value = '';
+  $('event-form-title').textContent = 'Add event';
+  $('cancel-event-edit').style.display = 'none';
+}
+
+async function writeEvents(updatedEvents, message) {
+  const latest = await GitHubAPI.getJsonFile({ owner: state.owner, repo: state.repo, branch: state.branch, token: state.token, path: 'data/events.json' });
+  const result = await GitHubAPI.putJsonFile({
+    owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
+    path: 'data/events.json', json: updatedEvents, sha: latest ? latest.sha : undefined, message
+  });
+  state.events = updatedEvents;
+  state.eventsSha = result.content.sha;
+  renderEventList();
+}
+
+async function handleSaveEvent() {
+  const status = $('event-status');
+  const title = $('e-title').value.trim();
+  const date = $('e-date').value;
+  if (!title || !date) {
+    setStatus(status, 'Title and date are required.', 'err');
+    return;
+  }
+  setStatus(status, 'Saving…', 'busy');
+  $('save-event-btn').disabled = true;
+  try {
+    const payload = {
+      id: state.editingEventId || newId('evt'),
+      title, date,
+      time: $('e-time').value,
+      location: $('e-location').value.trim(),
+      description: $('e-description').value.trim()
+    };
+    let updated;
+    if (state.editingEventId) {
+      updated = state.events.map(ev => ev.id === state.editingEventId ? payload : ev);
+    } else {
+      updated = [...state.events, payload];
+    }
+    await writeEvents(updated, state.editingEventId ? `Update event: ${title}` : `Add event: ${title}`);
+    resetEventForm();
+    setStatus(status, 'Saved.', 'ok');
+  } catch (e) {
+    setStatus(status, `Couldn't save: ${e.message}`, 'err');
+  } finally {
+    $('save-event-btn').disabled = false;
+  }
+}
+
+async function handleDeleteEvent(id) {
+  const ev = state.events.find(e => e.id === id);
+  if (!ev || !confirm(`Delete "${ev.title}"?`)) return;
+  const status = $('event-status');
+  setStatus(status, 'Deleting…', 'busy');
+  try {
+    await writeEvents(state.events.filter(e => e.id !== id), `Delete event: ${ev.title}`);
+    setStatus(status, 'Deleted.', 'ok');
+    if (state.editingEventId === id) resetEventForm();
+  } catch (e) {
+    setStatus(status, `Couldn't delete: ${e.message}`, 'err');
+  }
+}
+
+// ---------- Posts ----------
+
+function renderPostList() {
+  const list = $('post-list');
+  const sorted = [...state.posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (sorted.length === 0) {
+    list.innerHTML = '<p class="hint">No announcements yet.</p>';
+    return;
+  }
+  list.innerHTML = sorted.map(p => `
+    <div class="item-row">
+      <div class="item-main">
+        <strong>${escapeHtml(p.title)}${p.pinned ? ' 📌' : ''}</strong>
+        <span>${p.date}</span>
+      </div>
+      <button type="button" title="Edit" data-edit-post="${p.id}">✏️</button>
+      <button type="button" title="Delete" data-del-post="${p.id}">🗑️</button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('[data-edit-post]').forEach(btn =>
+    btn.addEventListener('click', () => startEditPost(btn.dataset.editPost)));
+  list.querySelectorAll('[data-del-post]').forEach(btn =>
+    btn.addEventListener('click', () => handleDeletePost(btn.dataset.delPost)));
+}
+
+function startEditPost(id) {
+  const p = state.posts.find(x => x.id === id);
+  if (!p) return;
+  state.editingPostId = id;
+  $('p-title').value = p.title || '';
+  $('p-body').value = p.body || '';
+  $('p-date').value = p.date || '';
+  $('p-pinned').checked = !!p.pinned;
+  $('post-form-title').textContent = 'Edit announcement';
+  $('cancel-post-edit').style.display = 'inline-block';
+  $('p-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetPostForm() {
+  state.editingPostId = null;
+  $('p-title').value = '';
+  $('p-body').value = '';
+  $('p-date').value = new Date().toISOString().slice(0, 10);
+  $('p-pinned').checked = false;
+  $('post-form-title').textContent = 'Add announcement';
+  $('cancel-post-edit').style.display = 'none';
+}
+
+async function writePosts(updatedPosts, message) {
+  const latest = await GitHubAPI.getJsonFile({ owner: state.owner, repo: state.repo, branch: state.branch, token: state.token, path: 'data/posts.json' });
+  const result = await GitHubAPI.putJsonFile({
+    owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
+    path: 'data/posts.json', json: updatedPosts, sha: latest ? latest.sha : undefined, message
+  });
+  state.posts = updatedPosts;
+  state.postsSha = result.content.sha;
+  renderPostList();
+}
+
+async function handleSavePost() {
+  const status = $('post-status');
+  const title = $('p-title').value.trim();
+  const date = $('p-date').value;
+  if (!title || !date) {
+    setStatus(status, 'Title and date are required.', 'err');
+    return;
+  }
+  setStatus(status, 'Saving…', 'busy');
+  $('save-post-btn').disabled = true;
+  try {
+    const payload = {
+      id: state.editingPostId || newId('post'),
+      title, date,
+      body: $('p-body').value.trim(),
+      pinned: $('p-pinned').checked
+    };
+    let updated;
+    if (state.editingPostId) {
+      updated = state.posts.map(p => p.id === state.editingPostId ? payload : p);
+    } else {
+      updated = [...state.posts, payload];
+    }
+    await writePosts(updated, state.editingPostId ? `Update post: ${title}` : `Add post: ${title}`);
+    resetPostForm();
+    setStatus(status, 'Saved.', 'ok');
+  } catch (e) {
+    setStatus(status, `Couldn't save: ${e.message}`, 'err');
+  } finally {
+    $('save-post-btn').disabled = false;
+  }
+}
+
+async function handleDeletePost(id) {
+  const p = state.posts.find(x => x.id === id);
+  if (!p || !confirm(`Delete "${p.title}"?`)) return;
+  const status = $('post-status');
+  setStatus(status, 'Deleting…', 'busy');
+  try {
+    await writePosts(state.posts.filter(x => x.id !== id), `Delete post: ${p.title}`);
+    setStatus(status, 'Deleted.', 'ok');
+    if (state.editingPostId === id) resetPostForm();
+  } catch (e) {
+    setStatus(status, `Couldn't delete: ${e.message}`, 'err');
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : str;
+  return div.innerHTML;
+}
+
+// ---------- Wire up ----------
+
+function init() {
+  loadSavedConnection();
+  resetPostForm();
+
+  const savedToken = sessionStorage.getItem('clubhub_token');
+  if (savedToken) $('f-token').value = savedToken;
+
+  $('connect-btn').addEventListener('click', handleConnect);
+  $('save-appearance-btn').addEventListener('click', handleSaveAppearance);
+  $('save-event-btn').addEventListener('click', handleSaveEvent);
+  $('cancel-event-edit').addEventListener('click', resetEventForm);
+  $('save-post-btn').addEventListener('click', handleSavePost);
+  $('cancel-post-edit').addEventListener('click', resetPostForm);
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+}
+
+init();
