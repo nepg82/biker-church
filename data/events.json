@@ -6,5 +6,13 @@
     "time": "08:30",
     "location": "Pastor Don's House",
     "description": "Pastries, Donuts, coffee."
+  },
+  {
+    "id": "evt-mrw6vm9k-a0qmn",
+    "title": "Mark Haacker's Memorial Service",
+    "date": "2026-07-25",
+    "time": "09:30",
+    "location": "KSU from Pastor Don's House",
+    "description": ""
   }
 ]
