@@ -1,8 +1,9 @@
 {
   "name": "Biker Church Admin",
   "short_name": "BC Admin",
+  "id": "./admin.html",
   "start_url": "./admin.html",
-  "scope": "./",
+  "scope": "./admin.html",
   "display": "standalone",
   "background_color": "#EFE8D8",
   "theme_color": "#3D5A80",

@@ -1,6 +1,7 @@
 {
   "name": "Biker Church",
   "short_name": "Biker Church",
+  "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
