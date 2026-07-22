@@ -75,6 +75,8 @@ async function handleConnect() {
     setStatus(status, 'Connected.', 'ok');
     $('connected-badge').style.display = 'inline-block';
     document.querySelectorAll('.panel.data-panel').forEach(p => p.style.display = 'block');
+    $('connect-details').open = false;
+    $('appearance-details').open = false;
   } catch (e) {
     setStatus(status, `Couldn't connect: ${e.message}`, 'err');
   } finally {
