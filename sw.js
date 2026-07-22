@@ -9,8 +9,8 @@ const SHELL_FILES = [
   './js/github-api.js',
   './manifest.json',
   './manifest-admin.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './app-icons/app-icon-192.png',
+  './app-icons/app-icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
