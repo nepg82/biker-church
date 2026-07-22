@@ -62,8 +62,13 @@ async function handleConnect() {
     localStorage.setItem(LS_REPO, repo);
     localStorage.setItem(LS_BRANCH, branch);
     localStorage.setItem(LS_REMEMBER, remember ? '1' : '0');
-    if (remember) sessionStorage.removeItem('clubhub_token');
-    else sessionStorage.setItem('clubhub_token', token);
+    if (remember) {
+      localStorage.setItem('clubhub_token', token);
+      sessionStorage.removeItem('clubhub_token');
+    } else {
+      sessionStorage.setItem('clubhub_token', token);
+      localStorage.removeItem('clubhub_token');
+    }
 
     await loadAllData();
 
@@ -168,28 +173,55 @@ async function handleSaveAppearance() {
 
 // ---------- Events ----------
 
+function isPastEvent(ev, now = new Date()) {
+  const cutoff = new Date(`${ev.date}T${ev.time || '23:59'}`);
+  return cutoff < now;
+}
+
 function renderEventList() {
   const list = $('event-list');
   const sorted = [...state.events].sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
   if (sorted.length === 0) {
     list.innerHTML = '<p class="hint">No events yet.</p>';
+    $('bulk-delete-past-btn').style.display = 'none';
     return;
   }
-  list.innerHTML = sorted.map(ev => `
-    <div class="item-row">
+  const pastCount = sorted.filter(ev => isPastEvent(ev)).length;
+  $('bulk-delete-past-btn').style.display = pastCount > 0 ? 'inline-block' : 'none';
+  $('bulk-delete-past-btn').textContent = `Delete ${pastCount} past event${pastCount === 1 ? '' : 's'}`;
+
+  list.innerHTML = sorted.map(ev => {
+    const past = isPastEvent(ev);
+    return `
+    <div class="item-row${past ? ' past' : ''}">
       <div class="item-main">
-        <strong>${escapeHtml(ev.title)}</strong>
+        <strong>${escapeHtml(ev.title)}${past ? ' <span class="past-tag">PAST</span>' : ''}</strong>
         <span>${ev.date}${ev.time ? ' · ' + ev.time : ''}${ev.location ? ' · ' + escapeHtml(ev.location) : ''}</span>
       </div>
       <button type="button" title="Edit" data-edit-event="${ev.id}">✏️</button>
       <button type="button" title="Delete" data-del-event="${ev.id}">🗑️</button>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   list.querySelectorAll('[data-edit-event]').forEach(btn =>
     btn.addEventListener('click', () => startEditEvent(btn.dataset.editEvent)));
   list.querySelectorAll('[data-del-event]').forEach(btn =>
     btn.addEventListener('click', () => handleDeleteEvent(btn.dataset.delEvent)));
+}
+
+async function handleDeletePastEvents() {
+  const past = state.events.filter(ev => isPastEvent(ev));
+  if (past.length === 0) return;
+  if (!confirm(`Delete ${past.length} past event${past.length === 1 ? '' : 's'}? This can't be undone.`)) return;
+  const status = $('event-status');
+  setStatus(status, 'Deleting…', 'busy');
+  try {
+    await writeEvents(state.events.filter(ev => !isPastEvent(ev)), `Delete ${past.length} past event(s)`);
+    setStatus(status, 'Deleted.', 'ok');
+  } catch (e) {
+    setStatus(status, `Couldn't delete: ${e.message}`, 'err');
+  }
 }
 
 function startEditEvent(id) {
@@ -395,13 +427,14 @@ function init() {
   loadSavedConnection();
   resetPostForm();
 
-  const savedToken = sessionStorage.getItem('clubhub_token');
+  const savedToken = localStorage.getItem('clubhub_token') || sessionStorage.getItem('clubhub_token');
   if (savedToken) $('f-token').value = savedToken;
 
   $('connect-btn').addEventListener('click', handleConnect);
   $('save-appearance-btn').addEventListener('click', handleSaveAppearance);
   $('save-event-btn').addEventListener('click', handleSaveEvent);
   $('cancel-event-edit').addEventListener('click', resetEventForm);
+  $('bulk-delete-past-btn').addEventListener('click', handleDeletePastEvents);
   $('save-post-btn').addEventListener('click', handleSavePost);
   $('cancel-post-edit').addEventListener('click', resetPostForm);
 

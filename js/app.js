@@ -52,13 +52,20 @@ function renderWall(posts) {
   `).join('');
 }
 
+function isPastEvent(ev, now = new Date()) {
+  // Full-day events (no time set) count as "past" only once the day itself has ended.
+  const cutoff = new Date(`${ev.date}T${ev.time || '23:59'}`);
+  return cutoff < now;
+}
+
 function renderCalendar(events) {
   const container = document.getElementById('calendar-list');
-  if (!events || events.length === 0) {
-    container.innerHTML = '<p class="empty-state" style="color:var(--color-ink);opacity:.6;">No events on the calendar yet.</p>';
+  const upcoming = (events || []).filter(ev => !isPastEvent(ev));
+  if (upcoming.length === 0) {
+    container.innerHTML = '<p class="empty-state" style="color:var(--color-ink);opacity:.6;">No upcoming events on the calendar yet.</p>';
     return;
   }
-  const sorted = [...events].sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
+  const sorted = [...upcoming].sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
 
   let html = '';
   let lastMonthKey = '';
