@@ -1,5 +1,6 @@
 {
   "clubName": "Biker Church",
+  "hideClubTitle": false,
   "tagline": "There's nothing God can't fix in 2026... and forever!",
   "bannerFile": "assets/banner.png",
   "bannerVersion": 1784737629008,
