@@ -69,36 +69,92 @@ function isPastEvent(ev, now = new Date()) {
 
 function renderCalendar(events) {
   const container = document.getElementById('calendar-list');
+
   const upcoming = (events || []).filter(ev => !isPastEvent(ev));
+
   if (upcoming.length === 0) {
     container.innerHTML = '<p class="empty-state" style="color:var(--color-ink);opacity:.6;">No upcoming events on the calendar yet.</p>';
     return;
   }
-  const sorted = [...upcoming].sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
+
+  const sorted = [...upcoming].sort((a, b) =>
+    new Date(`${a.date}T${a.time || '00:00'}`) -
+    new Date(`${b.date}T${b.time || '00:00'}`)
+  );
+
+
+  // Group events by date
+  const grouped = {};
+
+  for (const ev of sorted) {
+    if (!grouped[ev.date]) {
+      grouped[ev.date] = [];
+    }
+
+    grouped[ev.date].push(ev);
+  }
+
 
   let html = '';
   let lastMonthKey = '';
-  for (const ev of sorted) {
-    const d = new Date(`${ev.date}T${ev.time || '00:00'}`);
+
+  for (const date in grouped) {
+
+    const eventsForDay = grouped[date];
+
+    const d = new Date(`${date}T00:00`);
+
     const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
+
     if (monthKey !== lastMonthKey) {
       html += `<h3 class="month-heading">${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}</h3>`;
       lastMonthKey = monthKey;
     }
+
+
     html += `
-      <div class="event-row">
+      <div class="day-card">
+
         <div class="event-date-badge">
           <span class="dow">${DOW_NAMES[d.getDay()]}</span>
           <span class="dnum">${d.getDate()}</span>
         </div>
-        <div class="event-info">
-          <p class="event-title">${escapeHtml(ev.title)}</p>
-          <p class="event-meta">${ev.time ? formatTime(ev.time) : ''}${ev.time && ev.location ? ' · ' : ''}${escapeHtml(ev.location || '')}</p>
-          ${ev.description ? `<p class="event-desc">${escapeHtml(ev.description)}</p>` : ''}
+
+
+        <div class="day-events">
+    `;
+
+
+    for (const ev of eventsForDay) {
+
+      html += `
+          <div class="event-info">
+
+            <p class="event-title">${escapeHtml(ev.title)}</p>
+
+            <p class="event-meta">
+              ${ev.time ? formatTime(ev.time) : ''}
+              ${ev.time && ev.location ? ' · ' : ''}
+              ${escapeHtml(ev.location || '')}
+            </p>
+
+            ${ev.description 
+              ? `<p class="event-desc">${escapeHtml(ev.description)}</p>` 
+              : ''}
+
+          </div>
+      `;
+    }
+
+
+    html += `
         </div>
+
       </div>
     `;
   }
+
+
   container.innerHTML = html;
 }
 
