@@ -147,4 +147,62 @@ async function init() {
   }
 }
 
+// =======================================
+// PWA Install Banner
+// =======================================
+
+let deferredPrompt = null;
+
+const installBanner = document.getElementById("installBanner");
+const installButton = document.getElementById("installButton");
+const dismissButton = document.getElementById("dismissInstall");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+
+    e.preventDefault();
+
+    deferredPrompt = e;
+
+    if (!localStorage.getItem("installBannerDismissed")) {
+        installBanner.classList.remove("hidden");
+    }
+
+});
+
+installButton.addEventListener("click", async () => {
+
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === "accepted") {
+
+        installBanner.classList.add("hidden");
+
+        localStorage.setItem("installBannerDismissed", "true");
+
+    }
+
+    deferredPrompt = null;
+
+});
+
+dismissButton.addEventListener("click", () => {
+
+    installBanner.classList.add("hidden");
+
+    localStorage.setItem("installBannerDismissed", "true");
+
+});
+
+window.addEventListener("appinstalled", () => {
+
+    installBanner.classList.add("hidden");
+
+    localStorage.setItem("installBannerDismissed", "true");
+
+});
+
 init();
