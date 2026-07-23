@@ -5,5 +5,14 @@
     "date": "2026-07-22",
     "body": "This is your wall. Announcements will show up here, check the calendar tab for upcoming events.",
     "pinned": true
+  },
+  {
+    "id": "post-mrxfwa70-20ebp",
+    "title": "Are you in this picture",
+    "date": "2026-06-19",
+    "body": "If not, we hope you'll be in the next one.",
+    "pinned": false,
+    "image": "assets/posts/post-mrxfwa70-20ebp.jpg",
+    "imageVersion": 1784806819385
   }
 ]
