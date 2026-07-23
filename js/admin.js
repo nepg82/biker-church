@@ -315,6 +315,39 @@ async function handleDeleteEvent(id) {
 
 // ---------- Posts ----------
 
+// Downscales/re-encodes an uploaded image in the browser before it gets
+// committed via the GitHub API, so a full-size phone photo doesn't turn
+// into a multi-megabyte blob in the repo's history every time.
+function compressImage(file, maxDim = 1200, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        if (width >= height) {
+          height = Math.round(height * (maxDim / width));
+          width = maxDim;
+        } else {
+          width = Math.round(width * (maxDim / height));
+          height = maxDim;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      canvas.toBlob(blob => {
+        if (!blob) { reject(new Error('Image compression failed.')); return; }
+        resolve(blob);
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read image file.')); };
+    img.src = url;
+  });
+}
+
 function renderPostList() {
   const list = $('post-list');
   const sorted = [...state.posts].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -325,8 +358,7 @@ function renderPostList() {
   list.innerHTML = sorted.map(p => `
     <div class="item-row">
       <div class="item-main">
-        <strong>${escapeHtml(p.title)}${p.pinned ? ' 📌' : ''}</strong>
-        <span>${p.date}</span>
+      <strong>${escapeHtml(p.title)}${p.pinned ? ' 📌' : ''}${p.image ? ' 🖼️' : ''}</strong>        <span>${p.date}</span>
       </div>
       <button type="button" title="Edit" data-edit-post="${p.id}">✏️</button>
       <button type="button" title="Delete" data-del-post="${p.id}">🗑️</button>
@@ -347,6 +379,16 @@ function startEditPost(id) {
   $('p-body').value = p.body || '';
   $('p-date').value = p.date || '';
   $('p-pinned').checked = !!p.pinned;
+  $('p-image-file').value = '';
+  $('p-remove-image').checked = false;
+  if (p.image) {
+    $('current-post-image').src = `${p.image}?v=${p.imageVersion || 0}`;
+    $('current-post-image').style.display = 'block';
+    $('p-remove-image-row').style.display = 'flex';
+  } else {
+    $('current-post-image').style.display = 'none';
+    $('p-remove-image-row').style.display = 'none';
+  }
   $('post-form-title').textContent = 'Edit announcement';
   $('cancel-post-edit').style.display = 'inline-block';
   $('p-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -358,6 +400,10 @@ function resetPostForm() {
   $('p-body').value = '';
   $('p-date').value = new Date().toISOString().slice(0, 10);
   $('p-pinned').checked = false;
+  $('p-image-file').value = '';
+  $('p-remove-image').checked = false;
+  $('current-post-image').style.display = 'none';
+  $('p-remove-image-row').style.display = 'none';
   $('post-form-title').textContent = 'Add announcement';
   $('cancel-post-edit').style.display = 'none';
 }
@@ -383,13 +429,41 @@ async function handleSavePost() {
   setStatus(status, 'Saving…', 'busy');
   $('save-post-btn').disabled = true;
   try {
+    const editingId = state.editingPostId;
+    const postId = editingId || newId('post');
+    const existing = editingId ? state.posts.find(p => p.id === editingId) : null;
+
+    let image = existing ? existing.image : undefined;
+    let imageVersion = existing ? existing.imageVersion : undefined;
+
+    if ($('p-remove-image').checked) {
+      image = undefined;
+      imageVersion = undefined;
+    }
+
+    const imageFile = $('p-image-file').files[0];
+    if (imageFile) {
+      setStatus(status, 'Compressing image…', 'busy');
+      const compressed = await compressImage(imageFile);
+      const imagePath = `assets/posts/${postId}.jpg`;
+      setStatus(status, 'Uploading image…', 'busy');
+      await GitHubAPI.putBinaryFile({
+        owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
+        path: imagePath, file: compressed, message: `Update image for post: ${title}`
+      });
+      image = imagePath;
+      imageVersion = Date.now();
+      setStatus(status, 'Saving…', 'busy');
+    }
+
     const payload = {
-      id: state.editingPostId || newId('post'),
+      id: postId,
       title, date,
       body: $('p-body').value.trim(),
-      pinned: $('p-pinned').checked
+      pinned: $('p-pinned').checked,
+      image,
+      imageVersion
     };
-    const editingId = state.editingPostId;
     await writePosts(
       (current) => editingId
         ? current.map(p => p.id === editingId ? payload : p)
