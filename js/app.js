@@ -46,6 +46,7 @@ function renderWall(posts) {
   board.innerHTML = sorted.map(p => `
     <div class="note-card${p.pinned ? ' pinned' : ''}">
       <span class="note-date">${formatDate(p.date)}</span>
+      ${p.image ? `<img class="note-thumb" src="${p.image}?v=${p.imageVersion || 0}" alt="">` : ''}
       <h3 class="note-title">${escapeHtml(p.title)}</h3>
       <p class="note-body">${escapeHtml(p.body)}</p>
     </div>
