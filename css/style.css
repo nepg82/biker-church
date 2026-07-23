@@ -529,3 +529,26 @@ footer.site-footer {
 .clickable-image {
     cursor: pointer;
 }
+
+/* Calendar day cards */
+
+.day-card {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.day-card:nth-child(even) {
+    background: rgba(0,0,0,.03);
+}
+
+.day-events {
+    flex: 1;
+}
+
+.event-info + .event-info {
+    border-top: 1px solid var(--color-line);
+    margin-top: 8px;
+    padding-top: 8px;
+}
