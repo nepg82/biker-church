@@ -503,3 +503,29 @@ footer.site-footer {
 .hidden {
     display: none;
 }
+
+.image-viewer {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.8);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 10000;
+}
+
+.image-viewer img {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+}
+
+.hidden {
+    display: none;
+}
+
+.clickable-image {
+    cursor: pointer;
+}
