@@ -540,7 +540,7 @@ footer.site-footer {
 }
 
 .day-card:nth-child(even) {
-    background: rgba(0,0,0,.03);
+    background: rgba(0,0,0,.01);
 }
 
 .day-events {
