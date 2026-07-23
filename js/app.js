@@ -46,8 +46,16 @@ function renderWall(posts) {
   board.innerHTML = sorted.map(p => `
     <div class="note-card${p.pinned ? ' pinned' : ''}">
       <span class="note-date">${formatDate(p.date)}</span>
-      ${p.image ? `<img class="note-thumb" src="${p.image}?v=${p.imageVersion || 0}" alt="">` : ''}
-      <h3 class="note-title">${escapeHtml(p.title)}</h3>
+${p.image ? `
+  <img 
+    class="note-thumb clickable-image" 
+    src="${p.image}?v=${p.imageVersion || 0}" 
+    alt=""
+    data-full-image="${p.image}?v=${p.imageVersion || 0}"
+  >
+` : ''}
+
+<h3 class="note-title">${escapeHtml(p.title)}</h3>
       <p class="note-body">${escapeHtml(p.body)}</p>
     </div>
   `).join('');
@@ -203,6 +211,33 @@ window.addEventListener("appinstalled", () => {
 
     localStorage.setItem("installBannerDismissed", "true");
 
+});
+
+const imageViewer = document.getElementById("imageViewer");
+const fullImage = document.getElementById("fullImage");
+
+document.addEventListener("click", (e) => {
+
+    if (e.target.classList.contains("clickable-image")) {
+
+        fullImage.src = e.target.dataset.fullImage;
+        imageViewer.classList.remove("hidden");
+
+    }
+
+    else if (e.target === imageViewer) {
+
+        imageViewer.classList.add("hidden");
+        fullImage.src = "";
+
+    }
+
+});
+
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+        imageViewer.classList.add("hidden");
+    }
 });
 
 init();
