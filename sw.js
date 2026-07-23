@@ -1,4 +1,4 @@
-const CACHE_NAME = 'biker-church-v2';
+const CACHE_NAME = 'biker-church-v2.1';
 
 const SHELL_FILES = [
   './index.html',
