@@ -109,6 +109,7 @@ function fillAppearanceForm() {
   const c = state.config || {};
   $('a-club-name').value = c.clubName || '';
   $('a-tagline').value = c.tagline || '';
+  $('a-hide-club-title').checked = !!c.hideClubTitle;
   const colors = c.colors || {};
   $('a-color-bg').value = colors.bg || '#EFE8D8';
   $('a-color-cork').value = colors.cork || '#7C5A3F';
@@ -140,6 +141,7 @@ async function handleSaveAppearance() {
       pin: $('a-color-pin').value,
       line: $('a-color-line').value
     };
+    const hideClubTitle = $('a-hide-club-title').checked;
 
     let bannerFile = null, bannerPath = null;
     const fileInput = $('a-banner-file').files[0];
@@ -156,7 +158,13 @@ async function handleSaveAppearance() {
       owner: state.owner, repo: state.repo, branch: state.branch, token: state.token,
       path: 'data/config.json',
       mutate: (current) => {
-        const merged = { ...(current || {}), clubName, tagline, colors };
+    const merged = { 
+      ...(current || {}), 
+      clubName, 
+      tagline, 
+      hideClubTitle,
+      colors 
+    };
         if (bannerPath) {
           merged.bannerFile = bannerPath;
           merged.bannerVersion = Date.now();
