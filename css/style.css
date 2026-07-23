@@ -235,8 +235,8 @@ main { flex: 1; }
 .event-date-badge {
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  background: var(--color-ink);
-  color: var(--color-card);
+  background: var(--color-line);
+  color: var(--color-ink);
   border-radius: 6px;
   padding: 6px 8px;
   text-align: center;
@@ -540,7 +540,7 @@ footer.site-footer {
 }
 
 .day-card:nth-child(even) {
-    background: rgba(0,0,0,.01);
+    background: rgba(0,0,0,.03);
 }
 
 .day-events {
