@@ -111,6 +111,16 @@
     <input type="date" id="p-date">
     <label for="p-body">Message</label>
     <textarea id="p-body"></textarea>
+
+    <label for="p-image-file">Image (optional)</label>
+    <input type="file" id="p-image-file" accept="image/*">
+    <p class="hint">Large photos are resized automatically before upload.</p>
+    <img id="current-post-image" alt="Current announcement image" style="display:none;max-width:100%;max-height:200px;border-radius:6px;margin-top:8px;">
+    <div class="toggle-row" id="p-remove-image-row" style="display:none;">
+      <input type="checkbox" id="p-remove-image">
+      <label for="p-remove-image">Remove this image</label>
+    </div>
+    
     <div class="toggle-row">
       <input type="checkbox" id="p-pinned">
       <label for="p-pinned">Pin to top of the wall</label>
