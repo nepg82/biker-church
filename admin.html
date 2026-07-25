@@ -16,6 +16,17 @@
   <h1 class="admin-title">Biker Church Admin</h1>
   <p class="admin-sub">Manage events, announcements, and how the member app looks.</p>
 
+  <div id="publish-bar" class="publish-bar" style="display:none;">
+    <div class="publish-bar-main">
+      <span id="publish-summary" class="publish-status-text">No unsaved changes.</span>
+      <p id="publish-status" class="status-line" style="margin:2px 0 0;"></p>
+    </div>
+    <div class="publish-bar-actions">
+      <button type="button" id="discard-draft-btn" class="btn secondary small">Discard draft</button>
+      <button type="button" id="publish-btn" class="btn small" disabled>Publish changes</button>
+    </div>
+  </div>
+
   <details class="panel" id="connect-details" open>
     <summary>Connect to your repo <span id="connected-badge" class="connected-badge" style="display:none;">Connected</span></summary>
     <p class="hint">
@@ -116,6 +127,13 @@
     <input type="date" id="p-date">
     <label for="p-body">Message</label>
     <textarea id="p-body"></textarea>
+
+    <div class="link-insert-row">
+      <input type="text" id="p-link-text" placeholder="Link text (e.g. RSVP here)">
+      <input type="text" id="p-link-url" placeholder="https://…">
+      <button type="button" id="insert-link-btn" class="btn secondary small">Insert link</button>
+    </div>
+    <p class="hint" style="margin:4px 0 0;">Inserts a clickable link into the message above. You can also type it directly as <code>[link text](https://example.com)</code>.</p>
 
     <label for="p-image-file">Image (optional)</label>
     <input type="file" id="p-image-file" accept="image/*">
