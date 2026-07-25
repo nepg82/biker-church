@@ -17,7 +17,13 @@ function applyTheme(config) {
   if (c.pin) root.setProperty('--color-pin', c.pin);
   if (c.line) root.setProperty('--color-line', c.line);
 
-  document.getElementById('club-name').textContent = config.clubName || 'Biker Church';
+  const clubName = document.getElementById('club-name');
+
+    if (clubName) {
+      clubName.textContent = config.clubName || 'Biker Church';
+      clubName.style.display = config.hideClubTitle ? 'none' : '';
+    }
+  
   document.getElementById('club-tagline').textContent = config.tagline || '';
   document.title = config.clubName || 'Biker Church';
 
@@ -33,17 +39,6 @@ function applyTheme(config) {
   }
 }
 
-function renderRichText(str) {
-  const escaped = escapeHtml(str);
-  // Turns [label](https://example.com) into a real, safe link. Runs after
-  // escaping, so this can't be used to smuggle in raw HTML — only the
-  // link markup itself is recognized, and only http(s) URLs qualify.
-  return escaped.replace(
-    /\[([^\[\]]+)\]\((https?:\/\/[^\s()]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-  );
-}
-
 function renderWall(posts) {
   const board = document.getElementById('wall-board');
   if (!posts || posts.length === 0) {
@@ -57,8 +52,17 @@ function renderWall(posts) {
   board.innerHTML = sorted.map(p => `
     <div class="note-card${p.pinned ? ' pinned' : ''}">
       <span class="note-date">${formatDate(p.date)}</span>
-      <h3 class="note-title">${escapeHtml(p.title)}</h3>
-      <p class="note-body">${renderRichText(p.body)}</p>
+${p.image ? `
+  <img 
+    class="note-thumb clickable-image" 
+    src="${p.image}?v=${p.imageVersion || 0}" 
+    alt=""
+    data-full-image="${p.image}?v=${p.imageVersion || 0}"
+  >
+` : ''}
+
+<h3 class="note-title">${escapeHtml(p.title)}</h3>
+      <p class="note-body">${escapeHtml(p.body)}</p>
     </div>
   `).join('');
 }
@@ -71,36 +75,92 @@ function isPastEvent(ev, now = new Date()) {
 
 function renderCalendar(events) {
   const container = document.getElementById('calendar-list');
+
   const upcoming = (events || []).filter(ev => !isPastEvent(ev));
+
   if (upcoming.length === 0) {
     container.innerHTML = '<p class="empty-state" style="color:var(--color-ink);opacity:.6;">No upcoming events on the calendar yet.</p>';
     return;
   }
-  const sorted = [...upcoming].sort((a, b) => new Date(`${a.date}T${a.time || '00:00'}`) - new Date(`${b.date}T${b.time || '00:00'}`));
+
+  const sorted = [...upcoming].sort((a, b) =>
+    new Date(`${a.date}T${a.time || '00:00'}`) -
+    new Date(`${b.date}T${b.time || '00:00'}`)
+  );
+
+
+  // Group events by date
+  const grouped = {};
+
+  for (const ev of sorted) {
+    if (!grouped[ev.date]) {
+      grouped[ev.date] = [];
+    }
+
+    grouped[ev.date].push(ev);
+  }
+
 
   let html = '';
   let lastMonthKey = '';
-  for (const ev of sorted) {
-    const d = new Date(`${ev.date}T${ev.time || '00:00'}`);
+
+  for (const date in grouped) {
+
+    const eventsForDay = grouped[date];
+
+    const d = new Date(`${date}T00:00`);
+
     const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
+
     if (monthKey !== lastMonthKey) {
       html += `<h3 class="month-heading">${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}</h3>`;
       lastMonthKey = monthKey;
     }
+
+
     html += `
-      <div class="event-row">
+      <div class="day-card">
+
         <div class="event-date-badge">
           <span class="dow">${DOW_NAMES[d.getDay()]}</span>
           <span class="dnum">${d.getDate()}</span>
         </div>
-        <div class="event-info">
-          <p class="event-title">${escapeHtml(ev.title)}</p>
-          <p class="event-meta">${ev.time ? formatTime(ev.time) : ''}${ev.time && ev.location ? ' · ' : ''}${escapeHtml(ev.location || '')}</p>
-          ${ev.description ? `<p class="event-desc">${escapeHtml(ev.description)}</p>` : ''}
+
+
+        <div class="day-events">
+    `;
+
+
+    for (const ev of eventsForDay) {
+
+      html += `
+          <div class="event-info">
+
+            <p class="event-title">${escapeHtml(ev.title)}</p>
+
+            <p class="event-meta">
+              ${ev.time ? formatTime(ev.time) : ''}
+              ${ev.time && ev.location ? ' · ' : ''}
+              ${escapeHtml(ev.location || '')}
+            </p>
+
+            ${ev.description 
+              ? `<p class="event-desc">${escapeHtml(ev.description)}</p>` 
+              : ''}
+
+          </div>
+      `;
+    }
+
+
+    html += `
         </div>
+
       </div>
     `;
   }
+
+
   container.innerHTML = html;
 }
 
@@ -156,5 +216,90 @@ async function init() {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 }
+
+// =======================================
+// PWA Install Banner
+// =======================================
+
+let deferredPrompt = null;
+
+const installBanner = document.getElementById("installBanner");
+const installButton = document.getElementById("installButton");
+const dismissButton = document.getElementById("dismissInstall");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+
+    e.preventDefault();
+
+    deferredPrompt = e;
+
+    if (!localStorage.getItem("installBannerDismissed")) {
+        installBanner.classList.remove("hidden");
+    }
+
+});
+
+installButton.addEventListener("click", async () => {
+
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === "accepted") {
+
+        installBanner.classList.add("hidden");
+
+        localStorage.setItem("installBannerDismissed", "true");
+
+    }
+
+    deferredPrompt = null;
+
+});
+
+dismissButton.addEventListener("click", () => {
+
+    installBanner.classList.add("hidden");
+
+    localStorage.setItem("installBannerDismissed", "true");
+
+});
+
+window.addEventListener("appinstalled", () => {
+
+    installBanner.classList.add("hidden");
+
+    localStorage.setItem("installBannerDismissed", "true");
+
+});
+
+const imageViewer = document.getElementById("imageViewer");
+const fullImage = document.getElementById("fullImage");
+
+document.addEventListener("click", (e) => {
+
+    if (e.target.classList.contains("clickable-image")) {
+
+        fullImage.src = e.target.dataset.fullImage;
+        imageViewer.classList.remove("hidden");
+
+    }
+
+    else if (e.target === imageViewer) {
+
+        imageViewer.classList.add("hidden");
+        fullImage.src = "";
+
+    }
+
+});
+
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+        imageViewer.classList.add("hidden");
+    }
+});
 
 init();
