@@ -68,6 +68,7 @@ ${p.image ? `
     class="note-thumb clickable-image" 
     src="${p.image}?v=${p.imageVersion || 0}" 
     alt=""
+    loading="lazy"
     data-full-image="${p.image}?v=${p.imageVersion || 0}"
   >
 ` : ''}
