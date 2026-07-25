@@ -39,6 +39,17 @@ function applyTheme(config) {
   }
 }
 
+function renderRichText(str) {
+  const escaped = escapeHtml(str);
+  // Turns [label](https://example.com) into a real, safe link. Runs after
+  // escaping, so this can't be used to smuggle in raw HTML — only the
+  // link markup itself is recognized, and only http(s) URLs qualify.
+  return escaped.replace(
+    /\[([^\[\]]+)\]\((https?:\/\/[^\s()]+)\)/g,
+    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+}
+
 function renderWall(posts) {
   const board = document.getElementById('wall-board');
   if (!posts || posts.length === 0) {
@@ -62,7 +73,7 @@ ${p.image ? `
 ` : ''}
 
 <h3 class="note-title">${escapeHtml(p.title)}</h3>
-      <p class="note-body">${escapeHtml(p.body)}</p>
+      <p class="note-body">${renderRichText(p.body)}</p>
     </div>
   `).join('');
 }
