@@ -6,8 +6,8 @@
 <title>Biker Church Admin</title>
 <meta name="theme-color" content="#3D5A80">
 <link rel="manifest" href="manifest-admin.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="app-icons/app-icon-192.png">
+<link rel="icon" href="app-icons/app-icon-192.png">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="admin-body">
@@ -15,17 +15,6 @@
 <div class="admin-shell">
   <h1 class="admin-title">Biker Church Admin</h1>
   <p class="admin-sub">Manage events, announcements, and how the member app looks.</p>
-
-  <div id="publish-bar" class="publish-bar" style="display:none;">
-    <div class="publish-bar-main">
-      <span id="publish-summary" class="publish-status-text">No unsaved changes.</span>
-      <p id="publish-status" class="status-line" style="margin:2px 0 0;"></p>
-    </div>
-    <div class="publish-bar-actions">
-      <button type="button" id="discard-draft-btn" class="btn secondary small">Discard draft</button>
-      <button type="button" id="publish-btn" class="btn small" disabled>Publish changes</button>
-    </div>
-  </div>
 
   <details class="panel" id="connect-details" open>
     <summary>Connect to your repo <span id="connected-badge" class="connected-badge" style="display:none;">Connected</span></summary>
@@ -65,6 +54,11 @@
 
     <label for="a-tagline">Tagline</label>
     <input type="text" id="a-tagline">
+
+    <div class="toggle-row">
+      <input type="checkbox" id="a-hide-club-title">
+      <label for="a-hide-club-title">Hide club title</label>
+    </div>
 
     <label for="a-banner-file">Banner image (upload to replace)</label>
     <input type="file" id="a-banner-file" accept="image/*">
@@ -123,13 +117,15 @@
     <label for="p-body">Message</label>
     <textarea id="p-body"></textarea>
 
-    <div class="link-insert-row">
-      <input type="text" id="p-link-text" placeholder="Link text (e.g. RSVP here)">
-      <input type="text" id="p-link-url" placeholder="https://…">
-      <button type="button" id="insert-link-btn" class="btn secondary small">Insert link</button>
+    <label for="p-image-file">Image (optional)</label>
+    <input type="file" id="p-image-file" accept="image/*">
+    <p class="hint">Large photos are resized automatically before upload.</p>
+    <img id="current-post-image" alt="Current announcement image" style="display:none;max-width:100%;max-height:200px;border-radius:6px;margin-top:8px;">
+    <div class="toggle-row" id="p-remove-image-row" style="display:none;">
+      <input type="checkbox" id="p-remove-image">
+      <label for="p-remove-image">Remove this image</label>
     </div>
-    <p class="hint" style="margin:4px 0 0;">Inserts a clickable link into the message above. You can also type it directly as <code>[link text](https://example.com)</code>.</p>
-
+    
     <div class="toggle-row">
       <input type="checkbox" id="p-pinned">
       <label for="p-pinned">Pin to top of the wall</label>
