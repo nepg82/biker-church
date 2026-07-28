@@ -266,7 +266,7 @@ main { flex: 1; }
 .admin-body { background: var(--color-bg); }
 
 .admin-shell {
-  max-width: 760px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px 16px 60px;
   width: 100%;
@@ -274,14 +274,23 @@ main { flex: 1; }
 
 .admin-title {
   font-family: var(--font-display);
-  font-size: 1.9rem;
-  margin: 6px 0 2px;
+  font-size: 1.25rem;
+  margin: 4px 0 14px;
 }
 
-.admin-sub {
-  opacity: 0.65;
-  margin: 0 0 20px;
-  font-size: 0.92rem;
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.col-left, .col-right { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+/* Two-column layout once there's real laptop-width room to use */
+@media (min-width: 900px) {
+  .layout { flex-direction: row; align-items: flex-start; }
+  .col-left { flex: 0 0 480px; }
+  .col-right { flex: 1; position: sticky; top: 20px; }
 }
 
 .panel {
@@ -291,6 +300,8 @@ main { flex: 1; }
   padding: 18px 18px 20px;
   margin-bottom: 20px;
 }
+
+.col-left > .panel, .col-right > .panel { margin-bottom: 0; }
 
 .panel h2 {
   font-family: var(--font-display);
@@ -321,7 +332,22 @@ main { flex: 1; }
 
 .panel[open] > summary::before { transform: rotate(90deg); }
 
-.panel:not([open]) { padding-bottom: 18px; }
+details.panel:not([open]) {
+  padding: 12px 18px 13px;
+}
+
+.list-panel summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.list-panel summary .count-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  opacity: 0.55;
+  font-weight: 400;
+}
 
 .panel .hint { font-size: 0.82rem; opacity: 0.6; margin: 0 0 14px; }
 
