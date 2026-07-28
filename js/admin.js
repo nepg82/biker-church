@@ -356,11 +356,15 @@ function renderEventList() {
   if (sorted.length === 0) {
     list.innerHTML = '<p class="hint">No events yet.</p>';
     $('bulk-delete-past-btn').style.display = 'none';
+    $('event-count-badge').textContent = '';
     return;
   }
   const pastCount = sorted.filter(ev => isPastEvent(ev)).length;
   $('bulk-delete-past-btn').style.display = pastCount > 0 ? 'inline-block' : 'none';
   $('bulk-delete-past-btn').textContent = `Delete ${pastCount} past event${pastCount === 1 ? '' : 's'}`;
+  $('event-count-badge').textContent = pastCount > 0
+    ? `${sorted.length} total, ${pastCount} past`
+    : `${sorted.length} total`;
 
   list.innerHTML = sorted.map(ev => {
     const past = isPastEvent(ev);
@@ -499,8 +503,10 @@ function renderPostList() {
   const sorted = [...state.posts].sort((a, b) => new Date(b.date) - new Date(a.date));
   if (sorted.length === 0) {
     list.innerHTML = '<p class="hint">No announcements yet.</p>';
+    $('post-count-badge').textContent = '';
     return;
   }
+  $('post-count-badge').textContent = `${sorted.length} total`;
   list.innerHTML = sorted.map(p => `
     <div class="item-row">
       <div class="item-main">
@@ -689,6 +695,18 @@ function init() {
       e.preventDefault();
       e.returnValue = '';
     }
+  });
+
+  // Belt-and-suspenders accordion: native <details name="…"> already makes
+  // these mutually exclusive in modern browsers, this just guarantees it.
+  document.querySelectorAll('.list-panel').forEach(panel => {
+    panel.addEventListener('toggle', () => {
+      if (panel.open) {
+        document.querySelectorAll('.list-panel').forEach(other => {
+          if (other !== panel) other.open = false;
+        });
+      }
+    });
   });
 
   if ('serviceWorker' in navigator) {
