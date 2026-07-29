@@ -252,6 +252,8 @@ main { flex: 1; }
 .event-meta { font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.65; margin: 0 0 5px; }
 .event-desc { margin: 0; font-size: 0.9rem; line-height: 1.4; }
 
+.event-location a {display: inline-block;}
+
 .section-label {
   font-family: var(--font-mono);
   font-size: 0.72rem;
