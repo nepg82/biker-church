@@ -252,8 +252,9 @@ main { flex: 1; }
 .event-meta { font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.65; margin: 0 0 5px; }
 .event-desc { margin: 0; font-size: 0.9rem; line-height: 1.4; }
 
-.event-location {margin: 0.2rem 0 0;}
-.event-location a {display: inline-block;}
+.event-time {margin: 0.2rem 0;font-weight: 600;}
+.event-location {margin: 0;line-height: 1.3;}
+.event-location a {display: inline-block;color: inherit;text-decoration: underline;}
 
 .section-label {
   font-family: var(--font-mono);
