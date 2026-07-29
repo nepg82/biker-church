@@ -374,7 +374,7 @@ function renderEventList() {
     <div class="item-row${past ? ' past' : ''}">
       <div class="item-main">
         <strong>${escapeHtml(ev.title)}${past ? ' <span class="past-tag">PAST</span>' : ''}</strong>
-        <span>${ev.date}${ev.time ? ' · ' + ev.time : ''}${ev.location ? ' · ' + escapeHtml(ev.location) : ''}</span>
+        <span>${ev.date}${ev.time ? ' · ' + ev.time : ''}${ev.endTime ? ' - ' + ev.endTime : ''}${ev.location ? ' · ' + escapeHtml(ev.location) : ''}</span>
       </div>
       <button type="button" title="Edit" data-edit-event="${ev.id}">✏️</button>
       <button type="button" title="Delete" data-del-event="${ev.id}">🗑️</button>
