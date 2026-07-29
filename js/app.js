@@ -269,13 +269,14 @@ function renderLocation(location) {
   if (!location) return '';
 
   const hasAddress = /\d+\s+\w+/.test(location);
+  const display = escapeHtml(location).replace(/\n/g, '<br>');
 
   if (hasAddress) {
     const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(location)}</a>`;
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${display}</a>`;
   }
 
-  return escapeHtml(location);
+  return display;
 }
 
 function escapeHtml(str) {
