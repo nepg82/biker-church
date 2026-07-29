@@ -1,13 +1,5 @@
 [
   {
-    "id": "evt-mrw6y5zq-y4gmu",
-    "title": "Blow Up the Attendance at a Small Church Ride",
-    "date": "2026-07-26",
-    "time": "09:20",
-    "location": "KSU from Tim Horton's, 1308 Niagara Falls Blvd",
-    "description": "Just south of Brighton Rd. across from Blvd. Mall"
-  },
-  {
     "id": "evt-mrwal2f1-rwq2w",
     "title": "Biker Church at Nick & Elle's House",
     "date": "2026-08-18",
@@ -24,14 +16,6 @@
     "endTime": "18:45",
     "location": "3958 Lockport Olcott Road, Lockport, NY 14094",
     "description": "Come for Taco Tuesday before church at Nick & Elle's House"
-  },
-  {
-    "id": "evt-mrwm0bsr-72wle",
-    "title": "Doc Preaching",
-    "date": "2026-07-28",
-    "time": "19:00",
-    "location": "Pastor Don's House",
-    "description": ""
   },
   {
     "id": "evt-mrwm9zou-00np6",
@@ -149,22 +133,5 @@
     "endTime": "19:30",
     "location": "Open Arms Community Church, 4143 Beach Ridge Rd, North Tonawanda, NY 14120",
     "description": "Nick Preaching on 1 John 4:7-21"
-  },
-  {
-    "id": "evt-mrxl2xpr-3ycnc",
-    "title": "Blow Up the Attendance at a Small Church",
-    "date": "2026-07-26",
-    "time": "10:00",
-    "location": "84 Capen Blvd, Buffalo, NY 14226",
-    "description": "PD doing the sermon at Cornerstone Community Church"
-  },
-  {
-    "id": "evt-ms6c0lk3-aqnqh",
-    "title": "test event title",
-    "date": "2026-07-29",
-    "time": "07:00",
-    "endTime": "17:00",
-    "location": "test location",
-    "description": "test description"
   }
 ]
