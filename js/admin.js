@@ -346,7 +346,9 @@ function handleSaveAppearance() {
 // ---------- Events ----------
 
 function isPastEvent(ev, now = new Date()) {
-  const cutoff = new Date(`${ev.date}T${ev.time || '23:59'}`);
+  const cutoff = new Date(
+    `${ev.date}T${ev.endTime || ev.time || '23:59'}`
+  );
   return cutoff < now;
 }
 
