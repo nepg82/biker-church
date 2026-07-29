@@ -143,19 +143,27 @@ function renderCalendar(events) {
     `;
 
 
-    for (const ev of eventsForDay) {
+for (const ev of eventsForDay) {
 
-      html += `
-          <div class="event-info">
+  html += `
+      <div class="event-info">
 
-            <p class="event-title">${escapeHtml(ev.title)}</p>
+        <div class="event-title-row">
+          <p class="event-title">${escapeHtml(ev.title)}</p>
 
-            <p class="event-meta">
-              ${ev.time ? formatTime(ev.time) : ''}
-              ${ev.time && ev.location ? ' · ' : ''}
-              ${escapeHtml(ev.location || '')}
-            </p>
+          <button
+            class="calendar-btn"
+            title="Add to Calendar"
+            aria-label="Add to Calendar">
+            📅
+          </button>
+        </div>
 
+        <p class="event-meta">
+          ${ev.time ? formatTime(ev.time) : ''}
+          ${ev.time && ev.location ? ' · ' : ''}
+          ${escapeHtml(ev.location || '')}
+        </p>
             ${ev.description 
               ? `<p class="event-desc">${escapeHtml(ev.description)}</p>` 
               : ''}
