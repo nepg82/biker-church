@@ -80,8 +80,9 @@ ${p.image ? `
 }
 
 function isPastEvent(ev, now = new Date()) {
-  // Full-day events (no time set) count as "past" only once the day itself has ended.
-  const cutoff = new Date(`${ev.date}T${ev.time || '23:59'}`);
+  const cutoff = new Date(
+    `${ev.date}T${ev.endTime || ev.time || '23:59'}`
+  );
   return cutoff < now;
 }
 
