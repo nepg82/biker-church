@@ -127,10 +127,9 @@ function addToCalendar(ev) {
 
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${ev.title.replace(/[^a-z0-9]/gi, '_')}.ics`;
 
   document.body.appendChild(link);
-  link.click();
+  window.open(url, '_blank');
   document.body.removeChild(link);
 
   URL.revokeObjectURL(url);
