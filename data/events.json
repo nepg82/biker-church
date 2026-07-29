@@ -142,5 +142,14 @@
     "time": "10:00",
     "location": "84 Capen Blvd, Buffalo, NY 14226",
     "description": "PD doing the sermon at Cornerstone Community Church"
+  },
+  {
+    "id": "evt-ms6c0lk3-aqnqh",
+    "title": "test event title",
+    "date": "2026-07-29",
+    "time": "07:00",
+    "endTime": "17:00",
+    "location": "test location",
+    "description": "test description"
   }
 ]
