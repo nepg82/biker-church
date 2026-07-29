@@ -405,6 +405,7 @@ function startEditEvent(id) {
   $('e-title').value = ev.title || '';
   $('e-date').value = ev.date || '';
   $('e-time').value = ev.time || '';
+  $('e-end-time').value = ev.endTime || '';
   $('e-location').value = ev.location || '';
   $('e-description').value = ev.description || '';
   $('event-form-title').textContent = 'Edit event';
@@ -417,6 +418,7 @@ function resetEventForm() {
   $('e-title').value = '';
   $('e-date').value = '';
   $('e-time').value = '';
+  $('e-end-time').value = '';
   $('e-location').value = '';
   $('e-description').value = '';
   $('event-form-title').textContent = 'Add event';
@@ -435,6 +437,7 @@ function handleSaveEvent() {
     id: state.editingEventId || newId('evt'),
     title, date,
     time: $('e-time').value,
+    endTime: $('e-end-time').value,
     location: $('e-location').value.trim(),
     description: $('e-description').value.trim()
   };
