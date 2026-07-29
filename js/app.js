@@ -214,7 +214,7 @@ for (const ev of eventsForDay) {
             data-event-id="${ev.id}"
             title="Add to Calendar"
             aria-label="Add to Calendar">
-            📅
+            🗓️
           </button>
         </div>
 
