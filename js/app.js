@@ -89,8 +89,10 @@ function addToCalendar(ev) {
   const start = new Date(`${ev.date}T${ev.time || '00:00'}`);
 
   // Default event length: 1 hour
-  const end = new Date(start.getTime() + 60 * 60 * 1000);
-
+  const end = ev.endTime
+    ? new Date(`${ev.date}T${ev.endTime}`)
+    : new Date(start.getTime() + 60 * 60 * 1000);
+  
   function formatICSDate(date) {
     return date.toISOString()
       .replace(/[-:]/g, '')
@@ -202,7 +204,7 @@ for (const ev of eventsForDay) {
 
           <button
             class="calendar-btn"
-            onclick='addToCalendar(${JSON.stringify(ev)})'
+            data-event-id="${ev.id}"
             title="Add to Calendar"
             aria-label="Add to Calendar">
             📅
@@ -232,6 +234,13 @@ for (const ev of eventsForDay) {
 
 
   container.innerHTML = html;
+
+  container.querySelectorAll('.calendar-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const ev = events.find(e => e.id === btn.dataset.eventId);
+    if (ev) addToCalendar(ev);
+  });
+});
 }
 
 function formatDate(dateStr) {
