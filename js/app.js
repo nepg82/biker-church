@@ -223,7 +223,7 @@ for (const ev of eventsForDay) {
             ${ev.time ? formatTime(ev.time) : ''}
             ${ev.endTime ? ' - ' + formatTime(ev.endTime) : ''}
             ${(ev.time || ev.endTime) && ev.location ? ' · ' : ''}
-            ${escapeHtml(ev.location || '')}
+            ${renderLocation(ev.location)}
           </p>
             ${ev.description 
               ? `<p class="event-desc">${escapeHtml(ev.description)}</p>` 
@@ -263,6 +263,19 @@ function formatTime(timeStr) {
   const period = h >= 12 ? 'PM' : 'AM';
   const h12 = h % 12 === 0 ? 12 : h % 12;
   return `${h12}:${String(m).padStart(2,'0')} ${period}`;
+}
+
+function renderLocation(location) {
+  if (!location) return '';
+
+  const hasAddress = /\d+\s+\w+/.test(location);
+
+  if (hasAddress) {
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(location)}</a>`;
+  }
+
+  return escapeHtml(location);
 }
 
 function escapeHtml(str) {
