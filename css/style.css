@@ -628,3 +628,24 @@ footer.site-footer {
     margin-top: 8px;
     padding-top: 8px;
 }
+
+
+.event-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calendar-btn {
+    background: none;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    margin-right: 0.25rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.calendar-btn:hover {
+    opacity: 0.7;
+}
