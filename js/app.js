@@ -85,6 +85,55 @@ function isPastEvent(ev, now = new Date()) {
   return cutoff < now;
 }
 
+function addToCalendar(ev) {
+  const start = new Date(`${ev.date}T${ev.time || '00:00'}`);
+
+  // Default event length: 1 hour
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+  function formatICSDate(date) {
+    return date.toISOString()
+      .replace(/[-:]/g, '')
+      .replace(/\.\d{3}/, '');
+  }
+
+  function escapeICS(text) {
+    return (text || '')
+      .replace(/\\/g, '\\\\')
+      .replace(/,/g, '\\,')
+      .replace(/;/g, '\\;')
+      .replace(/\n/g, '\\n');
+  }
+
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Biker Church//Calendar//EN',
+    'BEGIN:VEVENT',
+    `UID:${ev.id}@bikerchurch`,
+    `DTSTART:${formatICSDate(start)}`,
+    `DTEND:${formatICSDate(end)}`,
+    `SUMMARY:${escapeICS(ev.title)}`,
+    `LOCATION:${escapeICS(ev.location)}`,
+    `DESCRIPTION:${escapeICS(ev.description)}`,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${ev.title.replace(/[^a-z0-9]/gi, '_')}.ics`;
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+}
+
 function renderCalendar(events) {
   const container = document.getElementById('calendar-list');
 
@@ -153,6 +202,7 @@ for (const ev of eventsForDay) {
 
           <button
             class="calendar-btn"
+            onclick='addToCalendar(${JSON.stringify(ev)})'
             title="Add to Calendar"
             aria-label="Add to Calendar">
             📅
