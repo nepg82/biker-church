@@ -219,12 +219,19 @@ for (const ev of eventsForDay) {
           </button>
         </div>
 
-          <p class="event-meta">
-            ${ev.time ? formatTime(ev.time) : ''}
-            ${ev.endTime ? ' - ' + formatTime(ev.endTime) : ''}
-            ${(ev.time || ev.endTime) && ev.location ? ' · ' : ''}
-            ${renderLocation(ev.location)}
-          </p>
+          ${ev.time || ev.endTime ? `
+            <p class="event-time">
+              ${ev.time ? formatTime(ev.time) : ''}
+              ${ev.endTime ? ' - ' + formatTime(ev.endTime) : ''}
+            </p>
+          ` : ''}
+
+          ${ev.location ? `
+            <p class="event-location">
+              📍 ${renderLocation(ev.location)}
+            </p>
+          ` : ''}
+          
             ${ev.description 
               ? `<p class="event-desc">${escapeHtml(ev.description)}</p>` 
               : ''}
