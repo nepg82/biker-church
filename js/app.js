@@ -88,51 +88,59 @@ function isPastEvent(ev, now = new Date()) {
 function addToCalendar(ev) {
   const start = new Date(`${ev.date}T${ev.time || '00:00'}`);
 
-  // Default event length: 1 hour
   const end = ev.endTime
     ? new Date(`${ev.date}T${ev.endTime}`)
     : new Date(start.getTime() + 60 * 60 * 1000);
-  
+
   function formatICSDate(date) {
     return date.toISOString()
       .replace(/[-:]/g, '')
-      .replace(/\.\d{3}/, '');
+      .replace(/\.\d{3}Z$/, 'Z');
   }
 
   function escapeICS(text) {
-    return (text || '')
+    return String(text || '')
       .replace(/\\/g, '\\\\')
-      .replace(/,/g, '\\,')
       .replace(/;/g, '\\;')
-      .replace(/\n/g, '\\n');
+      .replace(/,/g, '\\,')
+      .replace(/\r?\n/g, '\\n');
   }
+
+  const now = formatICSDate(new Date());
 
   const ics = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Biker Church//Calendar//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
     'BEGIN:VEVENT',
     `UID:${ev.id}@bikerchurch`,
+    `DTSTAMP:${now}`,
     `DTSTART:${formatICSDate(start)}`,
     `DTEND:${formatICSDate(end)}`,
     `SUMMARY:${escapeICS(ev.title)}`,
     `LOCATION:${escapeICS(ev.location)}`,
     `DESCRIPTION:${escapeICS(ev.description)}`,
+    'STATUS:CONFIRMED',
     'END:VEVENT',
     'END:VCALENDAR'
   ].join('\r\n');
 
-  const blob = new Blob([ics], { type: 'text/calendar' });
+  const blob = new Blob([ics], {
+    type: 'text/calendar;charset=utf-8'
+  });
+
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement('a');
   link.href = url;
+  link.download = `${ev.title.replace(/[^a-z0-9]/gi, '_')}.ics`;
 
   document.body.appendChild(link);
-  window.open(url, '_blank');
+  link.click();
   document.body.removeChild(link);
 
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function renderCalendar(events) {
