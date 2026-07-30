@@ -267,7 +267,7 @@ main { flex: 1; }
 }
 .event-location .pin {
     flex: 0 0 auto;
-    line-height: 2.0;
+    line-height: 1.5;
 }
 
 .section-label {
