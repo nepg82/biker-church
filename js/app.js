@@ -283,7 +283,9 @@ function renderLocation(location) {
     const addressStart = lines.findIndex(line => /^\d+\s/.test(line));
 
     if (addressStart !== -1) {
-        const address = lines.slice(addressStart).join(', ');
+        const address = lines
+            .slice(addressStart)
+            .join(', ');
         const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 
         return `<a href="${url}" target="_blank" rel="noopener noreferrer">${display}</a>`;
