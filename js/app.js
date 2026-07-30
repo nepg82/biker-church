@@ -232,8 +232,8 @@ for (const ev of eventsForDay) {
             </p>
           ` : ''}
           
-            ${ev.description 
-              ? `<p class="event-desc">${escapeHtml(ev.description)}</p>` 
+            ${ev.description
+              ? `<p class="event-desc">${renderMultilineText(ev.description)}</p>`
               : ''}
 
           </div>
@@ -273,17 +273,26 @@ function formatTime(timeStr) {
 }
 
 function renderLocation(location) {
-  if (!location) return '';
+    if (!location) return '';
 
-  const hasAddress = /\d+\s+\w+/.test(location);
-  const display = escapeHtml(location).replace(/\n/g, '<br>');
+    const display = escapeHtml(location).replace(/\n/g, '<br>');
 
-  if (hasAddress) {
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${display}</a>`;
-  }
+    const lines = location.split('\n').map(l => l.trim()).filter(Boolean);
 
-  return display;
+    const addressStart = lines.findIndex(line => /^\d+\s/.test(line));
+
+    if (addressStart !== -1) {
+        const address = lines.slice(addressStart).join(', ');
+        const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${display}</a>`;
+    }
+
+    return display;
+}
+
+function renderMultilineText(text) {
+    return escapeHtml(text || '').replace(/\n/g, '<br>');
 }
 
 function escapeHtml(str) {
