@@ -228,7 +228,8 @@ for (const ev of eventsForDay) {
 
           ${ev.location ? `
             <p class="event-location">
-              📍 ${renderLocation(ev.location)}
+              <span class="pin">📍</span>
+              ${renderLocation(ev.location)}
             </p>
           ` : ''}
           
