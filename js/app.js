@@ -41,13 +41,19 @@ function applyTheme(config) {
 
 function renderRichText(str) {
   const escaped = escapeHtml(str);
-  // Turns [label](https://example.com) into a real, safe link. Runs after
-  // escaping, so this can't be used to smuggle in raw HTML — only the
-  // link markup itself is recognized, and only http(s) URLs qualify.
-  return escaped.replace(
-    /\[([^\[\]]+)\]\((https?:\/\/[^\s()]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-  );
+
+  return escaped
+    // Markdown links
+    .replace(
+      /\[([^\[\]]+)\]\((https?:\/\/[^\s()]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+    )
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // Italic
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Line breaks
+    .replace(/\n/g, '<br>');
 }
 
 function renderWall(posts) {
@@ -238,8 +244,8 @@ for (const ev of eventsForDay) {
         </div>
       ` : ''}
           
-            ${ev.description
-              ? `<p class="event-desc">${renderMultilineText(ev.description)}</p>`
+            ${ev.description 
+              ? `<p class="event-desc">${renderRichText(ev.description)}</p>` 
               : ''}
 
           </div>
