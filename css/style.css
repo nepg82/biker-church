@@ -252,7 +252,27 @@ main { flex: 1; }
 .event-meta { font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.65; margin: 0 0 5px; }
 .event-desc { margin: 0; font-size: 0.9rem; line-height: 1.4; }
 
-.event-time {margin: 0.2rem 0;font-weight: 600;}
+.event-details {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    column-gap: 0.8rem;
+    align-items: start;
+    margin: 0.3rem 0;
+}
+
+.event-time-block {
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.time-arrow {
+    opacity: .65;
+    font-size: .9em;
+    margin: .1rem 0;
+}
+
 .event-location {
     display: flex;
     align-items: flex-start;
