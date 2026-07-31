@@ -95,8 +95,8 @@
     "date": "2026-08-07",
     "time": "09:00",
     "endTime": "11:00",
-    "location": "TBD",
-    "description": "To a never been to before location - waiting to make sure they will be open. Stay tuned."
+    "location": "Syros Restaurant\n869 Cayuga St\nLewiston, NY 14092",
+    "description": ""
   },
   {
     "id": "evt-mrxkbixl-rq5tl",
@@ -133,5 +133,14 @@
     "endTime": "19:30",
     "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
     "description": "Nick Preaching on 1 John 4:7-21"
+  },
+  {
+    "id": "evt-ms975rlv-ygzib",
+    "title": "Biker Breakfast Ride",
+    "date": "2026-08-07",
+    "time": "08:20",
+    "endTime": "09:00",
+    "location": "Pastor Don's House\n826 Ohio Street\nNorth Tonawanda, NY 14120",
+    "description": "Breakfast at Syro's in Lewiston at 9:00am.\n**If you want to ride there together, KSU from PD's house at 8:20am**"
   }
 ]
