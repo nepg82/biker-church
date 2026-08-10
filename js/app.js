@@ -110,6 +110,16 @@ function isEventInProgress(ev, now = new Date()) {
   return now >= start && now < end;
 }
 
+function isEventFinished(ev, now = new Date()) {
+  if (!isTodayEvent(ev, now) || !ev.time) return false;
+
+  const end = ev.endTime
+    ? new Date(`${ev.date}T${ev.endTime}`)
+    : new Date(`${ev.date}T${ev.time}`);
+
+  return now >= end;
+}
+
 function addToCalendar(ev) {
   const start = new Date(`${ev.date}T${ev.time || '00:00'}`);
 
@@ -230,6 +240,8 @@ for (const ev of eventsForDay) {
 
   const todayClass = isTodayEvent(ev) ? ' today' : '';
   const liveClass = isEventInProgress(ev) ? ' in-progress' : '';
+  const finishedClass = isEventFinished(ev) ? ' finished' : '';
+
 
   html += `
       <div class="event-info${todayClass}${liveClass}">
