@@ -148,7 +148,7 @@
     "title": "Test Event",
     "date": "2026-08-10",
     "time": "08:00",
-    "endTime": "08:30",
+    "endTime": "08:15",
     "location": "just a test location",
     "description": "just a test description"
   }
