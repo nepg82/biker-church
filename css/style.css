@@ -247,10 +247,45 @@ main { flex: 1; }
 .event-date-badge .dow { display: block; font-size: 0.62rem; opacity: 0.7; text-transform: uppercase; }
 .event-date-badge .dnum { display: block; font-size: 1.1rem; font-weight: 700; }
 
-.event-info { flex: 1; }
+.event-info {
+    flex: 1;
+    padding: 10px 12px;
+    border-left: 4px solid transparent;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
 .event-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 3px; }
 .event-meta { font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.65; margin: 0 0 5px; }
 .event-desc { margin: 0; font-size: 0.9rem; line-height: 1.4; }
+
+/* Events happening today */
+.event-info.today {
+    background: var(--color-card);
+    border-left-color: var(--color-accent);
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+/* Event happening RIGHT NOW */
+.event-info.in-progress {
+    background: rgba(178,58,46,.08);
+    border-left-color: var(--color-pin);
+    box-shadow: 0 3px 10px rgba(178,58,46,.25);
+    transform: scale(1.01);
+}
+
+/* Little "LIVE" indicator */
+.event-info.in-progress::before {
+    content: 'NOW';
+    float: right;
+    font-family: var(--font-mono);
+    font-size: .6rem;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: var(--color-pin);
+    border: 1px solid var(--color-pin);
+    border-radius: 4px;
+    padding: 2px 5px;
+}
 
 .event-details {
     display: grid;
@@ -272,7 +307,7 @@ main { flex: 1; }
 
 .time-arrow {
     opacity: .55;
-    color: var(--color-board);
+    color: var(--color-ink);
     font-size: .9em;
     margin: .1rem 0;
 }
