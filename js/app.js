@@ -100,22 +100,18 @@ function isTodayEvent(ev, now = new Date()) {
 }
 
 function isEventInProgress(ev, now = new Date()) {
-  if (!isTodayEvent(ev, now) || !ev.time) return false;
+  if (!isTodayEvent(ev, now) || !ev.time || !ev.endTime) return false;
 
   const start = new Date(`${ev.date}T${ev.time}`);
-  const end = ev.endTime
-    ? new Date(`${ev.date}T${ev.endTime}`)
-    : new Date(start.getTime() + 60 * 60 * 1000);
+  const end = new Date(`${ev.date}T${ev.endTime}`);
 
   return now >= start && now < end;
 }
 
 function isEventFinished(ev, now = new Date()) {
-  if (!isTodayEvent(ev, now) || !ev.time) return false;
+  if (!isTodayEvent(ev, now) || !ev.endTime) return false;
 
-  const end = ev.endTime
-    ? new Date(`${ev.date}T${ev.endTime}`)
-    : new Date(`${ev.date}T${ev.time}`);
+  const end = new Date(`${ev.date}T${ev.endTime}`);
 
   return now >= end;
 }
