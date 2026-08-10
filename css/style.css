@@ -287,6 +287,11 @@ main { flex: 1; }
     padding: 2px 5px;
 }
 
+.event-info.finished {
+    opacity: 0.5;
+    box-shadow: none;
+}
+
 .event-details {
     display: grid;
     grid-template-columns: 6.5rem 1fr;
