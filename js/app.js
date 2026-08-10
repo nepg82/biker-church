@@ -86,10 +86,28 @@ ${p.image ? `
 }
 
 function isPastEvent(ev, now = new Date()) {
-  const cutoff = new Date(
-    `${ev.date}T${ev.endTime || ev.time || '23:59'}`
-  );
-  return cutoff < now;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const eventDate = new Date(`${ev.date}T00:00`);
+
+  return eventDate < today;
+}
+
+function isTodayEvent(ev, now = new Date()) {
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const eventDate = new Date(`${ev.date}T00:00`);
+
+  return eventDate.getTime() === today.getTime();
+}
+
+function isEventInProgress(ev, now = new Date()) {
+  if (!isTodayEvent(ev, now) || !ev.time) return false;
+
+  const start = new Date(`${ev.date}T${ev.time}`);
+  const end = ev.endTime
+    ? new Date(`${ev.date}T${ev.endTime}`)
+    : new Date(start.getTime() + 60 * 60 * 1000);
+
+  return now >= start && now < end;
 }
 
 function addToCalendar(ev) {
@@ -210,8 +228,11 @@ function renderCalendar(events) {
 
 for (const ev of eventsForDay) {
 
+  const todayClass = isTodayEvent(ev) ? ' today' : '';
+  const liveClass = isEventInProgress(ev) ? ' in-progress' : '';
+
   html += `
-      <div class="event-info">
+      <div class="event-info${todayClass}${liveClass}">
 
         <div class="event-title-row">
           <p class="event-title">${escapeHtml(ev.title)}</p>
