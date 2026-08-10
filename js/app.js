@@ -240,8 +240,8 @@ for (const ev of eventsForDay) {
 
 
   html += `
-      <div class="event-info${todayClass}${liveClass}">
-
+    <div class="event-info${todayClass}${liveClass}${finishedClass}">
+    
         <div class="event-title-row">
           <p class="event-title">${escapeHtml(ev.title)}</p>
 
