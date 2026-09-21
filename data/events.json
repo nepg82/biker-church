@@ -1,14 +1,5 @@
 [
   {
-    "id": "evt-mrwobj8a-td7dy",
-    "title": "Biker Church",
-    "date": "2026-09-15",
-    "time": "19:00",
-    "endTime": "19:30",
-    "location": "Pastor Don's House\n826 Ohio Street\nNorth Tonawanda, NY 14120",
-    "description": "Nick Preaching on 1 John 3:11-24"
-  },
-  {
     "id": "evt-mrwod3iy-b1j0t",
     "title": "Biker Church",
     "date": "2026-09-22",
@@ -61,15 +52,6 @@
     "endTime": "19:30",
     "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
     "description": "Nick Preaching on 1 John 4:7-21"
-  },
-  {
-    "id": "evt-mtak2kte-yf7y1",
-    "title": "Biker Breakfast",
-    "date": "2026-09-18",
-    "time": "09:15",
-    "endTime": "11:00",
-    "location": "Craft Coffee House\n6612 Campbell Blvd\nLockport, NY 14094",
-    "description": ""
   },
   {
     "id": "evt-mtvew69j-el02v",
