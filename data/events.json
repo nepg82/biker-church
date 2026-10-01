@@ -1,23 +1,5 @@
 [
   {
-    "id": "evt-mrwod3iy-b1j0t",
-    "title": "Biker Church",
-    "date": "2026-09-22",
-    "time": "19:00",
-    "endTime": "19:30",
-    "location": "Pastor Don's House\n826 Ohio Street\nNorth Tonawanda, NY 14120",
-    "description": "Pastor Don Preaching\n**ONLY ONE MORE TIME AT PD's HOUSE FOR THE SUMMER**"
-  },
-  {
-    "id": "evt-mrwoe4q1-q94sk",
-    "title": "Biker Church",
-    "date": "2026-09-29",
-    "time": "19:00",
-    "endTime": "19:30",
-    "location": "Pastor Don's House\n826 Ohio Street\nNorth Tonawanda, NY 14120",
-    "description": "Doc Preaching\n**LAST TIME AT PD's HOUSE FOR THE SUMMER**"
-  },
-  {
     "id": "evt-mrxkbixl-rq5tl",
     "title": "Biker Church",
     "date": "2026-10-06",
@@ -52,15 +34,6 @@
     "endTime": "19:30",
     "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
     "description": "Nick Preaching on 1 John 4:7-21"
-  },
-  {
-    "id": "evt-mtvew69j-el02v",
-    "title": "P.D.'s Award Winning Chili @ BC",
-    "date": "2026-09-29",
-    "time": "18:15",
-    "endTime": "19:00",
-    "location": "Pastor Don's House\n826 Ohio Street\nNorth Tonawanda, NY 14120",
-    "description": "Bring something to go with the chili.\nCrackers, cheese, cornbread, dessert etc.\nThis is NOT a chili cook-off.\nYou can bring chili if you want - there's no such thing as \"too much chili\"  :-)"
   },
   {
     "id": "evt-mupfkv8k-eay85",
