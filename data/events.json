@@ -1,32 +1,5 @@
 [
   {
-    "id": "evt-mrxkbixl-rq5tl",
-    "title": "Biker Church",
-    "date": "2026-10-06",
-    "time": "19:00",
-    "endTime": "19:30",
-    "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
-    "description": "Nick Preaching on 1 John 4:1-6"
-  },
-  {
-    "id": "evt-mrxke42n-oyybs",
-    "title": "Biker Church",
-    "date": "2026-10-13",
-    "time": "19:00",
-    "endTime": "19:30",
-    "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
-    "description": "Pastor Don Preaching"
-  },
-  {
-    "id": "evt-mrxkg8y8-0ijwx",
-    "title": "Biker Church",
-    "date": "2026-10-20",
-    "time": "19:00",
-    "endTime": "19:30",
-    "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
-    "description": "Doc Preaching"
-  },
-  {
     "id": "evt-mrxkhs85-z60b5",
     "title": "Biker Church",
     "date": "2026-10-27",
@@ -70,5 +43,32 @@
     "endTime": "19:30",
     "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
     "description": "Pastor Don Preaching"
+  },
+  {
+    "id": "evt-mvjh2s9s-mke97",
+    "title": "Cider and Donuts",
+    "date": "2026-10-27",
+    "time": "18:30",
+    "endTime": "19:00",
+    "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
+    "description": "Come early for cider & donuts!"
+  },
+  {
+    "id": "evt-mvjh3egv-sf9f6",
+    "title": "Christmas Party",
+    "date": "2026-12-15",
+    "time": "18:00",
+    "endTime": "19:00",
+    "location": "Open Arms Community Church\n4143 Beach Ridge Rd\nNorth Tonawanda, NY 14120",
+    "description": ""
+  },
+  {
+    "id": "evt-mvjh4w8y-hls7w",
+    "title": "Biker Breakfast",
+    "date": "2026-11-20",
+    "time": "09:00",
+    "endTime": "10:30",
+    "location": "TBA",
+    "description": "Mary, Aaron & Don are going to check out a new place to see if the food is good & they like bikers."
   }
 ]
