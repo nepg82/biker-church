@@ -104,7 +104,7 @@
     "title": "Win the chance to bless someone this Christmas!",
     "date": "2026-09-29",
     "body": "Each week you will have a chance make 1 guess on how much change is in the Garret's Popcorn can. Whoever guesses the exact amount wins it if you promise to do the following:\n1) Give it away to someone else\n2) Do it anonymously \n3) You can give the $$ to 1 person or more than 1 person - your choice\n \nIf no one guesses the exact amount, I will pull a name from all the entries at our Christmas party on December 15th & that person gets the money to give away. YOU MUST BE PRESENT TO WIN",
-    "pinned": true
+    "pinned": false
   },
   {
     "id": "post-mvjh76o2-f30ix",
@@ -135,5 +135,42 @@
     "pinned": false,
     "image": "assets/posts/post-mvjhiik6-urqeo.jpg",
     "imageVersion": 1792670137223
+  },
+  {
+    "id": "post-mwm9cspz-t41s2",
+    "title": "OABC 10/27/26 Video",
+    "date": "2026-10-27",
+    "body": "[Rumble Video Link](https://rumble.com/v7hhrj8-oabc-102726.html)\n1 John 4:7-21",
+    "pinned": false
+  },
+  {
+    "id": "post-mwm9dyto-zfobc",
+    "title": "OABC 11/3/26 Video",
+    "date": "2026-11-03",
+    "body": "[Rumble Video Link](https://rumble.com/v7htzu4-oabc-11326.html)\nLuke 12:4-5; Matthew 10:28; John 3:16; Psalm 7:11; John 3:36",
+    "pinned": false
+  },
+  {
+    "id": "post-mwm9fahf-nb02t",
+    "title": "OABC 11/10/26 Video",
+    "date": "2026-11-10",
+    "body": "[Rumble Video Link](https://rumble.com/v7i60xo-oabc-111026.html)\nIsaiah 55:8-9; Ecclesiastes 3:11; Psalm 31:15",
+    "pinned": false
+  },
+  {
+    "id": "post-mwm9h3dy-wtfxh",
+    "title": "OABC 11/17/26 Video",
+    "date": "2026-11-17",
+    "body": "[Rumble Video Link](https://rumble.com/v7iia5i-oabc-111726.html)\n1 John 5:1-12",
+    "pinned": false
+  },
+  {
+    "id": "post-mwm9mg4b-5dizw",
+    "title": "Biker Church Winter Break",
+    "date": "2026-12-22",
+    "body": "Biker Church will not meet on Tuesday 12/22 and 12/29\n\nHave a blessed and safe Christmas and Happy New Year!",
+    "pinned": true,
+    "image": "assets/posts/post-mwm9mg4b-5dizw.jpg",
+    "imageVersion": 1795015064630
   }
 ]
